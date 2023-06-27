@@ -10,16 +10,13 @@ public class Producto {
     private Double anchoEnPulgadas;
     private Double alturaEnPulgadas;
 
-    private MongoCollection<Document> collectionCatalogoProductos;
-
     public Producto(String nombreProducto, String marcaProducto, String modeloProducto, Double anchoEnPulgadas, Double alturaEnPulgadas, MongoCollection<Document> collectionCatalogoProductos) {
         this.nombreProducto = nombreProducto;
         this.marcaProducto = marcaProducto;
         this.modeloProducto = modeloProducto;
         this.anchoEnPulgadas = anchoEnPulgadas;
         this.alturaEnPulgadas = alturaEnPulgadas;
-        this.collectionCatalogoProductos = collectionCatalogoProductos;
-        agregarProductoACatalogo();
+        agregarProductoACatalogo(collectionCatalogoProductos);
     }
 
     public String getNombreProducto() {
@@ -42,11 +39,7 @@ public class Producto {
         return alturaEnPulgadas;
     }
 
-    public MongoCollection<Document> getCollectionCatalogoProductos() {
-        return collectionCatalogoProductos;
-    }
-
-    public void agregarProductoACatalogo(){
+    public void agregarProductoACatalogo(MongoCollection<Document> collectionCatalogoProductos){
         Document document = new Document();
         document.put("nombreProducto", this.nombreProducto);
         document.put("marcaProducto", this.marcaProducto);
