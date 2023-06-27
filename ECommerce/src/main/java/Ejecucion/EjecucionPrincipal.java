@@ -1,6 +1,7 @@
 package Ejecucion;
 
 import Modelos.Producto;
+import Modelos.Usuario.SesionUsuario;
 import Modelos.Usuario.Usuario;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoClient;
@@ -8,6 +9,9 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class EjecucionPrincipal {
     public static void main(String[] args) {
@@ -22,9 +26,13 @@ public class EjecucionPrincipal {
         MongoCollection<Document> collectionCatalogoProductos = mongoDatabase.getCollection("CatalogoProductos");
         MongoCollection<Document> collectionUsuario = mongoDatabase.getCollection("Usuarios");
 
-
         Producto producto = new Producto("Remera", "Gucci", "Manga abierta", 25.0, 12.6, collectionCatalogoProductos);
 
         Usuario usuario = new Usuario("Diego", "Calle 123", 12345612, collectionUsuario);
+        Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
+        Date fecha2 = new Date(2023, Calendar.JUNE, 10, 15, 20, 00);
+        SesionUsuario sesionUsuario = new SesionUsuario(fecha1, fecha2);
+
+        usuario.agregarSesion(sesionUsuario, collectionUsuario);
     }
 }

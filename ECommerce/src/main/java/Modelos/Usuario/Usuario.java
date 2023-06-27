@@ -2,6 +2,9 @@ package Modelos.Usuario;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -58,5 +61,21 @@ public class Usuario {
 
     public void agregarSesionDeUsuario(MongoCollection<Document> collectionUsuarios){
 
+    }
+
+    public void agregarSesion(SesionUsuario sesionUsuario, MongoCollection<Document> collectionUsuarios){
+        this.sesionesDeUsuario.add(sesionUsuario);
+        this.categoriaUsuario = sesionUsuario.calcularNuevaCategoria();
+        Document query = new Document();
+        query.put("dni", this.documentoIdentidad);
+
+        BasicDBObject objetoSesion = new BasicDBObject();
+        objetoSesion.put("inicio", sesionUsuario.getTiempoInicio().getTime());
+        objetoSesion.put("finalizado", sesionUsuario.getTiempoFinalizado().getTime());
+
+        UpdateResult updateQueryResult = collectionUsuarios.updateOne(Filters.eq("dni", this.documentoIdentidad),
+                Updates.combine(Updates.set("categoria", this.categoriaUsuario), Updates.push("sesiones", objetoSesion)));
+
+        System.out.println(updateQueryResult);
     }
 }
