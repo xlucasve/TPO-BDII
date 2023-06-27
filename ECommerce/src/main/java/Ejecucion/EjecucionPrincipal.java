@@ -9,12 +9,18 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.json.JSONObject;
+import redis.clients.jedis.JedisPooled;
 
 import java.util.Calendar;
 import java.util.Date;
 
 public class EjecucionPrincipal {
     public static void main(String[] args) {
+        JedisPooled jedis = new JedisPooled("localhost", 6379);
+        jedis.set("foo", "bar");
+        System.out.println(jedis.get("foo")); // prints "bar"
+
         MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
         MongoDatabase mongoDatabase = mongoClient.getDatabase("ECommerce");
         try {
@@ -32,6 +38,7 @@ public class EjecucionPrincipal {
         Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
         Date fecha2 = new Date(2023, Calendar.JUNE, 10, 15, 20, 00);
         SesionUsuario sesionUsuario = new SesionUsuario(fecha1, fecha2);
+
 
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
     }

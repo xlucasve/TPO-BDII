@@ -66,16 +66,14 @@ public class Usuario {
     public void agregarSesion(SesionUsuario sesionUsuario, MongoCollection<Document> collectionUsuarios){
         this.sesionesDeUsuario.add(sesionUsuario);
         this.categoriaUsuario = sesionUsuario.calcularNuevaCategoria();
-        Document query = new Document();
-        query.put("dni", this.documentoIdentidad);
 
         BasicDBObject objetoSesion = new BasicDBObject();
         objetoSesion.put("inicio", sesionUsuario.getTiempoInicio().getTime());
         objetoSesion.put("finalizado", sesionUsuario.getTiempoFinalizado().getTime());
 
+        //Se actualiza la categoria y se guarda la nueva sesion
         UpdateResult updateQueryResult = collectionUsuarios.updateOne(Filters.eq("dni", this.documentoIdentidad),
                 Updates.combine(Updates.set("categoria", this.categoriaUsuario), Updates.push("sesiones", objetoSesion)));
 
-        System.out.println(updateQueryResult);
     }
 }

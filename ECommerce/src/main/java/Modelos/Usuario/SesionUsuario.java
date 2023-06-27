@@ -23,7 +23,6 @@ public class SesionUsuario {
     public CategoriaUsuario calcularNuevaCategoria(){
         Long diferenciaEnMs = this.tiempoFinalizado.getTime() - this.tiempoInicio.getTime();
         Long diferenciaEnMinutos = (diferenciaEnMs / 1000) / 60;
-        System.out.println(diferenciaEnMinutos);
         if (diferenciaEnMinutos > 240){
             return CategoriaUsuario.TOP;
         } else if (diferenciaEnMinutos > 120){
