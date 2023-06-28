@@ -31,8 +31,12 @@ public class EjecucionPrincipal {
 
         MongoCollection<Document> collectionCatalogoProductos = mongoDatabase.getCollection("CatalogoProductos");
         MongoCollection<Document> collectionUsuario = mongoDatabase.getCollection("Usuarios");
+        MongoCollection<Document> collectionListadoPrecios = mongoDatabase.getCollection("ListadoPrecios");
 
-        Producto producto = new Producto("Remera", "Gucci", "Manga abierta", 25.0, 12.6, collectionCatalogoProductos);
+
+        Producto producto = new Producto("producto2", "Remera", "Gucci", "Manga abierta", 25.0, 12.6, 20.0, collectionCatalogoProductos, collectionListadoPrecios);
+        producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2);
+        System.out.println(producto.getProductoId());
 
         Usuario usuario = new Usuario("Diego", "Calle 123", 12345612, collectionUsuario);
         Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
