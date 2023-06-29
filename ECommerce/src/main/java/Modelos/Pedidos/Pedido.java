@@ -51,12 +51,15 @@ public class Pedido {
     public void almacenarPedido (CarroCompra CarroCompra, MongoCollection<Document> collectionPedido, Usuario Usuario) {
         ArrayList<BasicDBObject> datosClienteArray = new ArrayList<>();
         for (int i = 0; i < this.Cliente.size(); i++){
-           
-            BasicDBObject objetoSesion = new BasicDBObject();
-            objetoSesion.put("nombre", this.Cliente.get(i).getNombre());
-            objetoSesion.put("dni", this.Cliente.get(i).getDocumentoIdentidad());
-            objetoSesion.put("direccion", this.Cliente.get(i).getDireccion());
-            datosClienteArray.add(objetoSesion);
+
+            //FALTA TERMINAR LA LOGICA
+           if(this.Cliente.get(i).getUsuarioId() == this.CarroCompra.getCarroId()) {
+               BasicDBObject objetoSesion = new BasicDBObject();
+               objetoSesion.put("nombre", this.Cliente.get(i).getNombre());
+               objetoSesion.put("dni", this.Cliente.get(i).getDocumentoIdentidad());
+               objetoSesion.put("direccion", this.Cliente.get(i).getDireccion());
+               datosClienteArray.add(objetoSesion);
+           }
         }
 
         Document document = new Document();
