@@ -1,6 +1,7 @@
 package Ejecucion;
 
 import Modelos.CarroCompras.CarroCompra;
+import Modelos.Pedidos.Pedido;
 import Modelos.Producto.Producto;
 import Modelos.Usuario.SesionUsuario;
 import Modelos.Usuario.Usuario;
@@ -48,6 +49,7 @@ public class EjecucionPrincipal {
         usuario.recuperarSesion(collectionUsuario, "Diego");
 
         CarroCompra carroCompra = new CarroCompra("CarroCompraTest");
+
 
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.agregarProducto(jedis, producto);

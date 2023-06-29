@@ -28,6 +28,7 @@ public class Usuario {
         SesionUsuario sesionUsuario = new SesionUsuario(new Date(), new Date());
         this.sesionesDeUsuario.add(sesionUsuario);
         agregarUsuarioAColeccion(collectionUsuarios);
+        recuperarSesion(collectionUsuarios,  nombre);
     }
 
     public String getNombre() {
