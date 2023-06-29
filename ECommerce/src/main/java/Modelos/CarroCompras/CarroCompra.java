@@ -1,6 +1,6 @@
 package Modelos.CarroCompras;
 
-import Modelos.Producto;
+import Modelos.Producto.Producto;
 import redis.clients.jedis.JedisPooled;
 
 import java.util.ArrayList;
@@ -18,6 +18,22 @@ public class CarroCompra {
         this.lineaProductos = new ArrayList<>();
         this.cantidadItems = 0;
         this.precioTotal = 0.0;
+    }
+
+    public String getCarroId() {
+        return carroId;
+    }
+
+    public ArrayList<LineaProducto> getLineaProductos() {
+        return lineaProductos;
+    }
+
+    public Integer getCantidadItems() {
+        return cantidadItems;
+    }
+
+    public Double getPrecioTotal() {
+        return precioTotal;
     }
 
     public void agregarProducto(JedisPooled jedis, Producto producto){
@@ -39,8 +55,7 @@ public class CarroCompra {
         LineaProducto lineaProducto = new LineaProducto(producto.getProductoId(), producto);
         this.lineaProductos.add(lineaProducto);
         jedis.hset(this.carroId, lineaProducto.getIdLinea(), lineaProducto.getCantidad().toString());
-        System.out.println("LINEA PRODUCTO ID: " + lineaProducto.getIdLinea());
-        this.precioTotal += producto.getPrecioProducto();
+        aumentarPrecio(producto);
         this.cantidadItems++;
     }
 
@@ -49,16 +64,19 @@ public class CarroCompra {
             if (lineaProducto.getProducto().equals(producto)){
                 boolean eliminado = lineaProducto.eliminarUno();
                 if(eliminado){
-                    this.precioTotal -= producto.getPrecioProducto();
                     jedis.hset(this.carroId, lineaProducto.getIdLinea(), lineaProducto.getCantidad().toString());
 
-                    System.out.println("Se elimino el producto");
                 } else{
                     this.lineaProductos.remove(lineaProducto);
                     jedis.hdel(this.carroId, lineaProducto.getIdLinea());
-                    System.out.println("La linea de producto fue eliminada");
                 }
             }
         }
+        this.precioTotal -= producto.getPrecioProducto();
+    }
+
+
+    private void aumentarPrecio(Producto producto){
+        this.precioTotal += producto.getPrecioProducto();
     }
 }

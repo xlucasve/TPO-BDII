@@ -1,6 +1,6 @@
 package Modelos.CarroCompras;
 
-import Modelos.Producto;
+import Modelos.Producto.Producto;
 
 public class LineaProducto {
     private String idLinea;
@@ -30,7 +30,7 @@ public class LineaProducto {
     }
 
     public boolean eliminarUno(){
-        if (this.cantidad > 0) {
+        if (this.cantidad > 1) {
             this.cantidad--;
             return true;
         }

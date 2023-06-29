@@ -6,9 +6,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
-
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +26,6 @@ public class Usuario {
         SesionUsuario sesionUsuario = new SesionUsuario(new Date(), new Date());
         this.sesionesDeUsuario.add(sesionUsuario);
         agregarUsuarioAColeccion(collectionUsuarios);
-        recuperarSesion(collectionUsuarios, nombre);
     }
 
     public String getNombre() {
@@ -80,14 +76,4 @@ public class Usuario {
                 Updates.combine(Updates.set("categoria", this.categoriaUsuario), Updates.push("sesiones", objetoSesion)));
 
     }
-
-    public void recuperarSesion(MongoCollection<Document> collectionUsuarios, String nombre){
-        Document searchQuery = new Document();
-        searchQuery.put("nombre", nombre);
-        FindIterable<Document> cursor = collectionUsuarios.find(searchQuery);
-        MongoCursor<Document> cursorIterator = cursor.cursor();
-        System.out.println(cursorIterator.next());
-
-    }
-
 }
