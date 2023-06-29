@@ -1,5 +1,6 @@
 package Ejecucion;
 
+import Modelos.CarroCompras.CarroCompra;
 import Modelos.Producto;
 import Modelos.Usuario.SesionUsuario;
 import Modelos.Usuario.Usuario;
@@ -18,8 +19,6 @@ import java.util.Date;
 public class EjecucionPrincipal {
     public static void main(String[] args) {
         JedisPooled jedis = new JedisPooled("localhost", 6379);
-        jedis.set("foo", "bar");
-        System.out.println(jedis.get("foo")); // prints "bar"
 
         MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
         MongoDatabase mongoDatabase = mongoClient.getDatabase("ECommerce");
@@ -45,5 +44,17 @@ public class EjecucionPrincipal {
 
 
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
+
+        CarroCompra carroCompra = new CarroCompra("CarroCompraTest");
+
+        carroCompra.agregarProducto(jedis, producto);
+        carroCompra.agregarProducto(jedis, producto);
+        carroCompra.agregarProducto(jedis, producto);
+        carroCompra.agregarProducto(jedis, producto);
+        carroCompra.agregarProducto(jedis, producto);
+        carroCompra.eliminarUnProducto(jedis, producto);
+
+
+
     }
 }
