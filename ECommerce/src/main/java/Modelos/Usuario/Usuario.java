@@ -1,7 +1,9 @@
 package Modelos.Usuario;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
@@ -76,4 +78,13 @@ public class Usuario {
                 Updates.combine(Updates.set("categoria", this.categoriaUsuario), Updates.push("sesiones", objetoSesion)));
 
     }
+
+    public void recuperarSesion(MongoCollection<Document> collectionUsuarios, String nombre){
+        Document searchQuery = new Document();
+        searchQuery.put("nombre", nombre);
+        FindIterable<Document> cursor = collectionUsuarios.find(searchQuery);
+        MongoCursor<Document> cursorIterator = cursor.cursor();
+        System.out.println(cursorIterator.next());
+    }
+
 }

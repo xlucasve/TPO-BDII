@@ -1,7 +1,7 @@
 package Ejecucion;
 
 import Modelos.CarroCompras.CarroCompra;
-import Modelos.Producto;
+import Modelos.Producto.Producto;
 import Modelos.Usuario.SesionUsuario;
 import Modelos.Usuario.Usuario;
 import com.mongodb.MongoCommandException;
@@ -33,7 +33,7 @@ public class EjecucionPrincipal {
         MongoCollection<Document> collectionListadoPrecios = mongoDatabase.getCollection("ListadoPrecios");
 
 
-        Producto producto = new Producto("producto2", "Remera", "Gucci", "Manga abierta", 25.0, 12.6, 20.0, collectionCatalogoProductos, collectionListadoPrecios);
+        Producto producto = new Producto("producto2", "Remera", "Gucci", 12.2, 25.0, 12.6, 20.0, collectionCatalogoProductos, collectionListadoPrecios);
         producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2);
         System.out.println(producto.getProductoId());
 
@@ -44,6 +44,8 @@ public class EjecucionPrincipal {
 
 
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
+
+        usuario.recuperarSesion(collectionUsuario, "Diego");
 
         CarroCompra carroCompra = new CarroCompra("CarroCompraTest");
 
