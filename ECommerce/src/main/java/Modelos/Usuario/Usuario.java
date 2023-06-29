@@ -10,8 +10,11 @@ import org.bson.Document;
 import javax.management.Query;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Usuario {
+    private String usuarioId;
     private String nombre;
     private String direccion;
     private Integer documentoIdentidad;
@@ -27,6 +30,10 @@ public class Usuario {
         SesionUsuario sesionUsuario = new SesionUsuario(new Date(), new Date());
         this.sesionesDeUsuario.add(sesionUsuario);
         agregarUsuarioAColeccion(collectionUsuarios);
+    }
+
+    public String getUsuarioId() {
+        return usuarioId;
     }
 
     public String getNombre() {
@@ -57,7 +64,7 @@ public class Usuario {
         document.put("dni", this.documentoIdentidad);
         document.put("categoria", this.categoriaUsuario);
         document.put("sesiones", sesionesArray);
-        collectionUsuarios.insertOne(document);
+        this.usuarioId = Objects.requireNonNull(collectionUsuarios.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
     }
 
     public void agregarSesion(SesionUsuario sesionUsuario, MongoCollection<Document> collectionUsuarios){

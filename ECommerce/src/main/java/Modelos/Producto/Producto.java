@@ -7,6 +7,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Producto {
     private String productoId;
@@ -93,7 +94,7 @@ public class Producto {
         document.put("calificacion", this.calificacionProducto);
         document.put("reviews", reviewsArray);
 
-        this.productoId = collectionCatalogoProductos.insertOne(document).getInsertedId().toString();
+        this.productoId = Objects.requireNonNull(collectionCatalogoProductos.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
     }
 
     private void agregarProductoAListadoPrecios(MongoCollection<Document> collectionListadoPrecios){
