@@ -8,11 +8,15 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
-
+import java.util.Objects;
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Usuario {
+
+    private String usuarioId;
+
     private String nombre;
     private String direccion;
     private Integer documentoIdentidad;
@@ -29,6 +33,10 @@ public class Usuario {
         this.sesionesDeUsuario.add(sesionUsuario);
         agregarUsuarioAColeccion(collectionUsuarios);
         recuperarSesion(collectionUsuarios,  nombre);
+    }
+
+    public String getUsuarioId() {
+        return usuarioId;
     }
 
     public String getNombre() {
@@ -59,7 +67,8 @@ public class Usuario {
         document.put("dni", this.documentoIdentidad);
         document.put("categoria", this.categoriaUsuario);
         document.put("sesiones", sesionesArray);
-        collectionUsuarios.insertOne(document);
+        this.usuarioId = Objects.requireNonNull(collectionUsuarios.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
+
     }
 
     public void agregarSesionDeUsuario(MongoCollection<Document> collectionUsuarios){

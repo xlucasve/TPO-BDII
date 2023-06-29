@@ -13,6 +13,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.json.JSONObject;
 import redis.clients.jedis.JedisPooled;
+import java.util.UUID;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,9 +36,12 @@ public class EjecucionPrincipal {
         MongoCollection<Document> collectionPedido = mongoDatabase.getCollection("Pedidos");
 
 
-        Producto producto = new Producto("producto2", "Remera", "Gucci", 12.2, 25.0, 12.6, 20.0, collectionCatalogoProductos, collectionListadoPrecios);
+        Producto producto = new Producto( "Remera", "Gucci", "Manga abierta",
+                25.0, 12.6, 20.0, 4.7, collectionCatalogoProductos, collectionListadoPrecios);
+        Producto producto2 = new Producto( "Campera", "Gucci", "Manga Cerrada",
+                25.0, 12.6, 150.0, 4.7, collectionCatalogoProductos, collectionListadoPrecios);
         producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2);
-        System.out.println(producto.getProductoId());
+
 
         Usuario usuario = new Usuario("Diego", "Calle 123", 12345612, collectionUsuario);
         Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
@@ -45,22 +49,28 @@ public class EjecucionPrincipal {
         SesionUsuario sesionUsuario = new SesionUsuario(fecha1, fecha2);
 
 
+
+
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
-
+        System.out.println(usuario.getUsuarioId());
         usuario.recuperarSesion(collectionUsuario, "Diego");
-
-        CarroCompra carroCompra = new CarroCompra("CarroCompraTest");
-
-
-
+        CarroCompra carroCompra = new CarroCompra(usuario.getUsuarioId());
+        System.out.println(carroCompra.getCarroId());
 
         carroCompra.agregarProducto(jedis, producto);
+        carroCompra.agregarProducto(jedis, producto2);
         carroCompra.agregarProducto(jedis, producto);
-        carroCompra.agregarProducto(jedis, producto);
-        carroCompra.agregarProducto(jedis, producto);
+        carroCompra.agregarProducto(jedis, producto2);
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.eliminarUnProducto(jedis, producto);
+        carroCompra.eliminarUnProducto(jedis, producto);
+        System.out.println("TODOS ITEMS EN EL CARRO ANTES DE ELIMINAR UNA LINEA DE PRODUCTO: \n" + jedis.hgetAll(carroCompra.getCarroId()));
 
+
+        carroCompra.eliminarUnProducto(jedis, producto);
+        System.out.println("TODOS ITEMS EN EL CARRO DESPUES DE ELIMINAR UNA LINEA DE PRODUCTO: \n" + jedis.hgetAll(carroCompra.getCarroId()));
+        jedis.close();
+        mongoClient.close();
 
 
     }

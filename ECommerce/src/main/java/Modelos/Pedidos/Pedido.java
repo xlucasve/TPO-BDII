@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Pedido {
 
-    private Integer pedidoId;
+    private String pedidoId;
 
     private Integer ordenCompra;
 
@@ -23,7 +23,7 @@ public class Pedido {
 
     private ArrayList<Usuario> Cliente;
 
-    public Pedido(Integer pedidoId, Integer ordenCompra, Integer condicionIVA, Integer descuento, MongoCollection<Document> collectionPedido) {
+    public Pedido(String pedidoId, Integer ordenCompra, Integer condicionIVA, Integer descuento, MongoCollection<Document> collectionPedido) {
         this.pedidoId = pedidoId;
         this.ordenCompra = ordenCompra;
         this.condicionIVA = condicionIVA;
@@ -32,7 +32,7 @@ public class Pedido {
         this.Usuario = Usuario;
     }
 
-    public Integer pedidoId() {
+    public String pedidoId() {
         return pedidoId;
     }
 
@@ -49,7 +49,15 @@ public class Pedido {
     }
 
     public void almacenarPedido (CarroCompra CarroCompra, MongoCollection<Document> collectionPedido, Usuario Usuario) {
-
+        ArrayList<BasicDBObject> datosClienteArray = new ArrayList<>();
+        for (int i = 0; i < this.Cliente.size(); i++){
+           
+            BasicDBObject objetoSesion = new BasicDBObject();
+            objetoSesion.put("nombre", this.Cliente.get(i).getNombre());
+            objetoSesion.put("dni", this.Cliente.get(i).getDocumentoIdentidad());
+            objetoSesion.put("direccion", this.Cliente.get(i).getDireccion());
+            datosClienteArray.add(objetoSesion);
+        }
 
         Document document = new Document();
 
