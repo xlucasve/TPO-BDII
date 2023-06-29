@@ -32,6 +32,7 @@ public class EjecucionPrincipal {
         MongoCollection<Document> collectionCatalogoProductos = mongoDatabase.getCollection("CatalogoProductos");
         MongoCollection<Document> collectionUsuario = mongoDatabase.getCollection("Usuarios");
         MongoCollection<Document> collectionListadoPrecios = mongoDatabase.getCollection("ListadoPrecios");
+        MongoCollection<Document> collectionPedido = mongoDatabase.getCollection("Pedidos");
 
 
         Producto producto = new Producto("producto2", "Remera", "Gucci", 12.2, 25.0, 12.6, 20.0, collectionCatalogoProductos, collectionListadoPrecios);
@@ -49,6 +50,8 @@ public class EjecucionPrincipal {
         usuario.recuperarSesion(collectionUsuario, "Diego");
 
         CarroCompra carroCompra = new CarroCompra("CarroCompraTest");
+
+
 
 
         carroCompra.agregarProducto(jedis, producto);
