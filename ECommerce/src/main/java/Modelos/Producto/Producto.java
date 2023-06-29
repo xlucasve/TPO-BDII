@@ -1,9 +1,12 @@
-package Modelos;
+package Modelos.Producto;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import java.util.ArrayList;
 
 public class Producto {
     private String productoId;
@@ -13,9 +16,12 @@ public class Producto {
     private Double anchoEnPulgadas;
     private Double alturaEnPulgadas;
     private Double precioProducto;
+    private ArrayList<Review> reviews;
+    private Double calificacionProducto;
 
-    public Producto(String productoId, String nombreProducto, String marcaProducto, String modeloProducto,
+    public Producto(String nombreProducto, String marcaProducto, String modeloProducto,
                     Double anchoEnPulgadas, Double alturaEnPulgadas, Double precioProducto,
+                    Double calificacionProducto,
                     MongoCollection<Document> collectionCatalogoProductos,
                     MongoCollection<Document> collectionListadoPrecios) {
         this.nombreProducto = nombreProducto;
@@ -24,6 +30,10 @@ public class Producto {
         this.anchoEnPulgadas = anchoEnPulgadas;
         this.alturaEnPulgadas = alturaEnPulgadas;
         this.precioProducto = precioProducto;
+        Review review = new Review("Mateo", "Muy buen producto", 4.4);
+        this.reviews = new ArrayList<>();
+        this.reviews.add(review);
+        this.calificacionProducto = calificacionProducto;
         agregarProductoACatalogo(collectionCatalogoProductos);
         agregarProductoAListadoPrecios(collectionListadoPrecios);
     }
@@ -54,13 +64,34 @@ public class Producto {
         return precioProducto;
     }
 
+    public ArrayList<Review> getReviews() {
+        return reviews;
+    }
+
+    public Double getCalificacionProducto() {
+        return calificacionProducto;
+    }
+
     private void agregarProductoACatalogo(MongoCollection<Document> collectionCatalogoProductos){
+
+        ArrayList<BasicDBObject> reviewsArray = new ArrayList<>();
+        for(Review review : this.reviews){
+        BasicDBObject objetoSesion = new BasicDBObject();
+            objetoSesion.put("nombreUsuario", review.getNombreUsuarioReview());
+            objetoSesion.put("comentario", review.getComentario());
+            objetoSesion.put("calificacion", review.getCalificacion());
+            objetoSesion.put("likesReview", review.getLikeCounter());
+            reviewsArray.add(objetoSesion);
+        }
+
         Document document = new Document();
         document.put("nombreProducto", this.nombreProducto);
         document.put("marcaProducto", this.marcaProducto);
         document.put("modeloProducto", this.modeloProducto);
         document.put("anchoEnPulgadas", this.anchoEnPulgadas);
         document.put("alturaEnPulgadas", this.alturaEnPulgadas);
+        document.put("calificacion", this.calificacionProducto);
+        document.put("reviews", reviewsArray);
 
         this.productoId = collectionCatalogoProductos.insertOne(document).getInsertedId().toString();
     }
@@ -81,6 +112,5 @@ public class Producto {
         Bson updatePrecio = Updates.set("precio", this.precioProducto);
 
         collectionListadoPrecios.updateOne(query, updatePrecio);
-
     }
 }

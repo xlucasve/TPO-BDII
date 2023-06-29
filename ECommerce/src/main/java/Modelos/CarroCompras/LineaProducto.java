@@ -1,6 +1,6 @@
 package Modelos.CarroCompras;
 
-import Modelos.Producto;
+import Modelos.Producto.Producto;
 
 public class LineaProducto {
     private String idLinea;

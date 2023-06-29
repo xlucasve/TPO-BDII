@@ -1,6 +1,6 @@
 package Modelos.CarroCompras;
 
-import Modelos.Producto;
+import Modelos.Producto.Producto;
 import redis.clients.jedis.JedisPooled;
 
 import java.util.ArrayList;
@@ -50,9 +50,11 @@ public class CarroCompra {
                 boolean eliminado = lineaProducto.eliminarUno();
                 if(eliminado){
                     this.precioTotal -= producto.getPrecioProducto();
+                    System.out.println("Antes: " + jedis.hget(this.carroId, lineaProducto.getProducto().getProductoId()));
                     jedis.hset(this.carroId, lineaProducto.getIdLinea(), lineaProducto.getCantidad().toString());
-
                     System.out.println("Se elimino el producto");
+                    System.out.println("Despues: " + jedis.hget(this.carroId, lineaProducto.getProducto().getProductoId()));
+
                 } else{
                     this.lineaProductos.remove(lineaProducto);
                     jedis.hdel(this.carroId, lineaProducto.getIdLinea());

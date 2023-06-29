@@ -7,6 +7,7 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 
+import javax.management.Query;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -43,10 +44,10 @@ public class Usuario {
     public void agregarUsuarioAColeccion(MongoCollection<Document> collectionUsuarios){
 
         ArrayList<BasicDBObject> sesionesArray = new ArrayList<>();
-        for (int i = 0; i < this.sesionesDeUsuario.size(); i++){
+        for (SesionUsuario sesionUsuario : this.sesionesDeUsuario){
             BasicDBObject objetoSesion = new BasicDBObject();
-            objetoSesion.put("inicio", this.sesionesDeUsuario.get(i).getTiempoInicio().getTime());
-            objetoSesion.put("finalizado", this.sesionesDeUsuario.get(i).getTiempoFinalizado().getTime());
+            objetoSesion.put("inicio", sesionUsuario.getTiempoInicio().getTime());
+            objetoSesion.put("finalizado", sesionUsuario.getTiempoFinalizado().getTime());
             sesionesArray.add(objetoSesion);
         }
 
@@ -57,10 +58,6 @@ public class Usuario {
         document.put("categoria", this.categoriaUsuario);
         document.put("sesiones", sesionesArray);
         collectionUsuarios.insertOne(document);
-    }
-
-    public void agregarSesionDeUsuario(MongoCollection<Document> collectionUsuarios){
-
     }
 
     public void agregarSesion(SesionUsuario sesionUsuario, MongoCollection<Document> collectionUsuarios){
@@ -76,4 +73,5 @@ public class Usuario {
                 Updates.combine(Updates.set("categoria", this.categoriaUsuario), Updates.push("sesiones", objetoSesion)));
 
     }
+
 }
