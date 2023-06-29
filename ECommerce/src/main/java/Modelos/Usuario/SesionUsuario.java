@@ -31,4 +31,6 @@ public class SesionUsuario {
             return CategoriaUsuario.LOW;
         }
     }
+
+
 }

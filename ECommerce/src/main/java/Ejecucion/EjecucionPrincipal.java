@@ -44,7 +44,7 @@ public class EjecucionPrincipal {
 
 
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
-
+        usuario.recuperarSesion(collectionUsuario, "Diego");
         CarroCompra carroCompra = new CarroCompra("CarroCompraTest");
 
         carroCompra.agregarProducto(jedis, producto);
