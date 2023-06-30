@@ -1,6 +1,7 @@
 package Ejecucion;
 
 import Modelos.CarroCompras.CarroCompra;
+import Modelos.Operador.Operador;
 import Modelos.Pedidos.Pedido;
 import Modelos.Producto.Producto;
 import Modelos.Usuario.CategoriaIVA;
@@ -67,8 +68,8 @@ public class EjecucionPrincipal {
 
 
         //Crear nuevo Pedido
-
-        Pedido pedido1 = new Pedido(1, 20.4, carroCompra, usuario, collectionPedido);
+        Operador operador = new Operador(1, "Damian", "Galvez", 1243650);
+        Pedido pedido1 = new Pedido(1, 20.4, carroCompra, usuario, operador, collectionPedido);
         System.out.println(pedido1.getPedidoId());
 
         //Cerramos la conexión
