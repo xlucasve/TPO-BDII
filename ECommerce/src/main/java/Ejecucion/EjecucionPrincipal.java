@@ -15,12 +15,38 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import redis.clients.jedis.JedisPooled;
 
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
 public class EjecucionPrincipal {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+
+
+        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
+
+        Connection conn = DriverManager.getConnection(connectionUrl);
+        if (conn != null) {
+            System.out.println("Conectado exitosamente");
+        }
+
+        Statement stmt = conn.createStatement();
+
+        String select = "select * from operadores";
+        System.out.println("Peticion: " + select);
+        ResultSet rset = stmt.executeQuery(select);
+
+        while (rset.next()){
+            String nombre = rset.getString("nombre");
+            System.out.println("Nombre: " + nombre);
+            String apellido = rset.getString("apellido");
+            System.out.println("Apellido: " + apellido);
+            Integer dni = rset.getInt("dni");
+            System.out.println("DNI: " + dni);
+        }
+
+
         JedisPooled jedis = new JedisPooled("localhost", 6379);
 
         MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
@@ -30,6 +56,8 @@ public class EjecucionPrincipal {
         } catch (MongoCommandException e) {
             System.out.println("Collecion creada exitosamente");
         }
+
+
 
         MongoCollection<Document> collectionCatalogoProductos = mongoDatabase.getCollection("CatalogoProductos");
         MongoCollection<Document> collectionUsuario = mongoDatabase.getCollection("Usuarios");
