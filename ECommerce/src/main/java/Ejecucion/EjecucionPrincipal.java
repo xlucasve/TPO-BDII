@@ -17,6 +17,7 @@ import redis.clients.jedis.JedisPooled;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 public class EjecucionPrincipal {
     public static void main(String[] args) {
@@ -62,9 +63,18 @@ public class EjecucionPrincipal {
         carroCompra.agregarProducto(jedis, producto2);
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.eliminarUnProducto(jedis, producto);
-        System.out.println("TODOS ITEMS EN EL CARRO ANTES DE ELIMINAR UNA LINEA DE PRODUCTO: \n" + jedis.hgetAll(carroCompra.getCarroId()));
         carroCompra.eliminarUnProducto(jedis, producto);
-        System.out.println("TODOS ITEMS EN EL CARRO DESPUES DE ELIMINAR UNA LINEA DE PRODUCTO: \n" + jedis.hgetAll(carroCompra.getCarroId()));
+
+        //Obtener items de carro
+        Map<String, String> pedidosCarro = jedis.hgetAll(carroCompra.getCarroId());
+        for (String key : pedidosCarro.keySet()){
+            String key1 = key;
+            Integer cantidad = Integer.parseInt(pedidosCarro.get(key));
+            System.out.println("Clave: " + key1);
+            System.out.println("CANTIDAD: " + cantidad);
+        }
+        System.out.println("Pedido 1: " + producto.getProductoId());
+        System.out.println("Pedido 2: " + producto2.getProductoId());
 
 
         //Crear nuevo Pedido

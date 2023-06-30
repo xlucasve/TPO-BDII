@@ -96,6 +96,7 @@ public class Usuario {
     }
 
     public void recuperarSesion(MongoCollection<Document> collectionUsuarios){
+        //Completar para obtener la ultima sesion unicamente
         Document searchQuery = new Document();
         searchQuery.put("nombre", nombre);
         FindIterable<Document> cursor = collectionUsuarios.find(searchQuery);
