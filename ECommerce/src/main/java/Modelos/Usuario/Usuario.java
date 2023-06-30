@@ -9,30 +9,31 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Usuario {
 
     private String usuarioId;
-
     private String nombre;
+    private String apellido;
     private String direccion;
     private Integer documentoIdentidad;
+    private CategoriaIVA categoriaIVA;
     private CategoriaUsuario categoriaUsuario;
     private ArrayList<SesionUsuario> sesionesDeUsuario;
 
-    public Usuario(String nombre, String direccion, Integer documentoIdentidad, MongoCollection<Document> collectionUsuarios) {
+    public Usuario(String nombre, String apellido, String direccion, Integer documentoIdentidad, CategoriaIVA categoriaIVA, MongoCollection<Document> collectionUsuarios) {
         this.nombre = nombre;
+        this.apellido = apellido;
         this.direccion = direccion;
         this.documentoIdentidad = documentoIdentidad;
         this.categoriaUsuario = CategoriaUsuario.LOW;
+        this.categoriaIVA = categoriaIVA;
         this.sesionesDeUsuario = new ArrayList<>();
         SesionUsuario sesionUsuario = new SesionUsuario(new Date(), new Date());
         this.sesionesDeUsuario.add(sesionUsuario);
         agregarUsuarioAColeccion(collectionUsuarios);
-        recuperarSesion(collectionUsuarios,  nombre);
     }
 
     public String getUsuarioId() {
@@ -43,12 +44,20 @@ public class Usuario {
         return nombre;
     }
 
+    public String getApellido() {
+        return apellido;
+    }
+
     public String getDireccion() {
         return direccion;
     }
 
     public Integer getDocumentoIdentidad() {
         return documentoIdentidad;
+    }
+
+    public CategoriaIVA getCategoriaIVA() {
+        return categoriaIVA;
     }
 
     public void agregarUsuarioAColeccion(MongoCollection<Document> collectionUsuarios){
@@ -63,15 +72,12 @@ public class Usuario {
 
         Document document = new Document();
         document.put("nombre", this.nombre);
+        document.put("apellido", this.apellido);
         document.put("direccion", this.direccion);
         document.put("dni", this.documentoIdentidad);
         document.put("categoria", this.categoriaUsuario);
         document.put("sesiones", sesionesArray);
         this.usuarioId = Objects.requireNonNull(collectionUsuarios.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
-
-    }
-
-    public void agregarSesionDeUsuario(MongoCollection<Document> collectionUsuarios){
 
     }
 
@@ -89,7 +95,7 @@ public class Usuario {
 
     }
 
-    public void recuperarSesion(MongoCollection<Document> collectionUsuarios, String nombre){
+    public void recuperarSesion(MongoCollection<Document> collectionUsuarios){
         Document searchQuery = new Document();
         searchQuery.put("nombre", nombre);
         FindIterable<Document> cursor = collectionUsuarios.find(searchQuery);

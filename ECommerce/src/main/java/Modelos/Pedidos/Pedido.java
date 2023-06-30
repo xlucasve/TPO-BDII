@@ -1,75 +1,75 @@
 package Modelos.Pedidos;
 import Modelos.CarroCompras.CarroCompra;
+import Modelos.CarroCompras.LineaProducto;
 import Modelos.Usuario.SesionUsuario;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import Modelos.Usuario.Usuario;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Pedido {
 
     private String pedidoId;
 
-    private Integer ordenCompra;
-
     private Integer condicionIVA;
 
-    private Integer descuento;
+    private Double descuento;
 
-    private CarroCompra CarroCompra;
+    private CarroCompra carroCompra;
 
-    private Usuario Usuario;
+    private Usuario cliente;
 
-    private ArrayList<Usuario> Cliente;
 
-    public Pedido(String pedidoId, Integer ordenCompra, Integer condicionIVA, Integer descuento, MongoCollection<Document> collectionPedido) {
-        this.pedidoId = pedidoId;
-        this.ordenCompra = ordenCompra;
+    public Pedido(Integer condicionIVA, Double descuento, CarroCompra carroCompra, Usuario cliente, MongoCollection<Document> collectionPedido) {
         this.condicionIVA = condicionIVA;
         this.descuento = descuento;
-        this.CarroCompra = CarroCompra;
-        this.Usuario = Usuario;
+        this.carroCompra = carroCompra;
+        this.cliente = cliente;
+        guardarPedido(collectionPedido);
     }
 
-    public String pedidoId() {
+    public String getPedidoId() {
         return pedidoId;
     }
 
-    public Integer ordenCompra() {
-        return ordenCompra;
-    }
-
-    public Integer condicionIVA() {
+    public Integer getCondicionIVA() {
         return condicionIVA;
     }
 
-    public Integer descuento() {
+    public Double getDescuento() {
         return descuento;
     }
 
-    public void almacenarPedido (CarroCompra CarroCompra, MongoCollection<Document> collectionPedido, Usuario Usuario) {
-        ArrayList<BasicDBObject> datosClienteArray = new ArrayList<>();
-        for (int i = 0; i < this.Cliente.size(); i++){
-
+    private void guardarPedido (MongoCollection<Document> collectionPedido) {
             //FALTA TERMINAR LA LOGICA
-           if(this.Cliente.get(i).getUsuarioId() == this.CarroCompra.getCarroId()) {
-               BasicDBObject objetoSesion = new BasicDBObject();
-               objetoSesion.put("nombre", this.Cliente.get(i).getNombre());
-               objetoSesion.put("dni", this.Cliente.get(i).getDocumentoIdentidad());
-               objetoSesion.put("direccion", this.Cliente.get(i).getDireccion());
-               datosClienteArray.add(objetoSesion);
-           }
+
+        BasicDBObject objectoCliente = new BasicDBObject();
+        objectoCliente.put("nombreCliente", this.cliente.getNombre());
+        objectoCliente.put("apellidoCliente", this.cliente.getApellido());
+        objectoCliente.put("direccionCliente", this.cliente.getDireccion());
+        objectoCliente.put("ivaCliente", this.cliente.getCategoriaIVA());
+
+        ArrayList<BasicDBObject> productosPedidos  = new ArrayList<>();
+        for(LineaProducto lineaProducto : this.carroCompra.getLineaProductos()){
+            BasicDBObject objetoProducto = new BasicDBObject();
+            objetoProducto.put("idProducto", lineaProducto.getIdLinea());
+            objetoProducto.put("cantidad", lineaProducto.getCantidad());
+            objetoProducto.put("precioUnitario", lineaProducto.getProducto().getPrecioProducto());
+            objetoProducto.put("nombre", lineaProducto.getProducto().getNombreProducto());
+            objetoProducto.put("marca", lineaProducto.getProducto().getMarcaProducto());
+            objetoProducto.put("modelo", lineaProducto.getProducto().getModeloProducto());
+            productosPedidos.add(objetoProducto);
         }
 
         Document document = new Document();
+        document.put("cliente", objectoCliente);
+        document.put("condicionIVA", getCondicionIVA());
+        document.put("pedidos", productosPedidos);
+        document.put("precioTotal", this.carroCompra.getPrecioTotal());
+        document.put("descuento", getDescuento());
 
-        document.put("pedidoId", this.pedidoId);
-        document.put("ordenCompra", this.ordenCompra);
-        document.put("condicionIVA", this.condicionIVA);
-        document.put("descuento", this.descuento);
-
-        collectionPedido.insertOne(document);
-
+        this.pedidoId = Objects.requireNonNull(collectionPedido.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
     }
 }
