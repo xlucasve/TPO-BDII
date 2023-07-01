@@ -7,11 +7,14 @@ import Modelos.Producto.Producto;
 import Modelos.Usuario.CategoriaIVA;
 import Modelos.Usuario.SesionUsuario;
 import Modelos.Usuario.Usuario;
+import com.datastax.driver.core.Session;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import conexionesBD.CassandraConnector;
+import org.apache.cassandra.schema.SchemaKeyspace;
 import org.bson.Document;
 import redis.clients.jedis.JedisPooled;
 
@@ -23,6 +26,19 @@ import java.util.Map;
 public class EjecucionPrincipal {
     public static void main(String[] args) throws SQLException {
 
+
+        //Conexion con Cassandra
+
+        CassandraConnector conexion = new CassandraConnector();
+        conexion.connect("127.0.0.1", 9142);
+        Session session = conexion.getSession();
+        String query = "CREATE KEYSPACE ejemplo WITH replication "
+                + "= {'class':'SimpleStrategy', 'replication_factor':1};";
+        session.execute(query);
+        session.execute("USE ejemplo");
+
+
+        //Fin Cassandra
 
         String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
 
