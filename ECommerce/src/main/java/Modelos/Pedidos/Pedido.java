@@ -7,7 +7,11 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import Modelos.Usuario.Usuario;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPooled;
+
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 public class Pedido {
@@ -18,20 +22,20 @@ public class Pedido {
 
     private Double descuento;
 
-    private CarroCompra carroCompra;
+    private String idCarroCompra;
 
     private Usuario cliente;
 
     private Operador operadorResponsable;
 
 
-    public Pedido(Integer condicionIVA, Double descuento, CarroCompra carroCompra, Usuario cliente, Operador operadorResponsable, MongoCollection<Document> collectionPedido) {
+    public Pedido(Integer condicionIVA, Double descuento,Double precioTotal, String idCarroCompra, Usuario cliente, Operador operadorResponsable, MongoCollection<Document> collectionPedido, JedisPooled jedis) {
         this.condicionIVA = condicionIVA;
         this.descuento = descuento;
-        this.carroCompra = carroCompra;
+        this.idCarroCompra = idCarroCompra;
         this.cliente = cliente;
         this.operadorResponsable = operadorResponsable;
-        guardarPedido(collectionPedido);
+        guardarPedido(precioTotal, collectionPedido, jedis);
     }
 
     public String getPedidoId() {
@@ -46,47 +50,69 @@ public class Pedido {
         return descuento;
     }
 
+    public String getIdCarroCompra() {
+        return idCarroCompra;
+    }
+
     public Operador getOperadorResponsable() {
         return operadorResponsable;
     }
 
-    private void guardarPedido (MongoCollection<Document> collectionPedido) {
+    private void guardarPedido (Double precioTotal, MongoCollection<Document> collectionPedido, JedisPooled jedis) {
 
         //Datos Cliente
-        BasicDBObject objectoCliente = new BasicDBObject();
-        objectoCliente.put("nombreCliente", this.cliente.getNombre());
-        objectoCliente.put("apellidoCliente", this.cliente.getApellido());
-        objectoCliente.put("direccionCliente", this.cliente.getDireccion());
-        objectoCliente.put("ivaCliente", this.cliente.getCategoriaIVA());
+        BasicDBObject objetoCliente = obtenerDatosCliente(this.cliente);
 
         //Datos Operador Responsable
-        BasicDBObject objectoOpeardor = new BasicDBObject();
-        objectoOpeardor.put("idOperador", this.operadorResponsable.getIdOperador());
-        objectoOpeardor.put("nombreOperador", this.operadorResponsable.getNombreOperador());
-        objectoOpeardor.put("apellidoOperador", this.operadorResponsable.getApellidoOperador());
-        objectoOpeardor.put("dniOperador", this.operadorResponsable.getDniOperador());
+        BasicDBObject objetoOpeardor = obtenerDatosOperador(this.operadorResponsable);
+
 
         //Datos items de pedido
-        ArrayList<BasicDBObject> productosPedidos  = new ArrayList<>();
-        for(LineaProducto lineaProducto : this.carroCompra.getLineaProductos()){
-            BasicDBObject objetoProducto = new BasicDBObject();
-            objetoProducto.put("idProducto", lineaProducto.getIdLinea());
-            objetoProducto.put("cantidad", lineaProducto.getCantidad());
-            objetoProducto.put("precioUnitario", lineaProducto.getProducto().getPrecioProducto());
-            objetoProducto.put("nombre", lineaProducto.getProducto().getNombreProducto());
-            objetoProducto.put("marca", lineaProducto.getProducto().getMarcaProducto());
-            objetoProducto.put("modelo", lineaProducto.getProducto().getModeloProducto());
-            productosPedidos.add(objetoProducto);
-        }
+        ArrayList<BasicDBObject> productosPedidos  = obtenerDatosPedido(getIdCarroCompra(), jedis);
+
+
+
 
         //Introduccion datos y otros varios
         Document document = new Document();
-        document.put("cliente", objectoCliente);
-        document.put("operador", objectoOpeardor);
+        document.put("cliente", objetoCliente);
+        document.put("operador", objetoOpeardor);
         document.put("condicionIVA", getCondicionIVA());
         document.put("pedidos", productosPedidos);
-        document.put("precioTotal", this.carroCompra.getPrecioTotal());
+        document.put("precioTotal", precioTotal);
 
         this.pedidoId = Objects.requireNonNull(collectionPedido.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
     }
+
+    private BasicDBObject obtenerDatosCliente(Usuario cliente){
+        BasicDBObject objetoCliente = new BasicDBObject();
+        objetoCliente.put("nombreCliente", cliente.getNombre());
+        objetoCliente.put("apellidoCliente", cliente.getApellido());
+        objetoCliente.put("direccionCliente", cliente.getDireccion());
+        objetoCliente.put("ivaCliente", cliente.getCategoriaIVA());
+        return objetoCliente;
+    }
+
+    private BasicDBObject obtenerDatosOperador(Operador operador){
+        BasicDBObject objetoOpeardor = new BasicDBObject();
+        objetoOpeardor.put("idOperador", operador.getIdOperador());
+        objetoOpeardor.put("nombreOperador", operador.getNombreOperador());
+        objetoOpeardor.put("apellidoOperador", operador.getApellidoOperador());
+        objetoOpeardor.put("dniOperador", operador.getDniOperador());
+        return objetoOpeardor;
+    }
+
+    private ArrayList<BasicDBObject> obtenerDatosPedido(String idCarroCompra, JedisPooled jedis){
+        ArrayList<BasicDBObject> productosPedidos  = new ArrayList<>();
+        Map<String, String> pedidosCarro = jedis.hgetAll(getIdCarroCompra());
+        for (String key : pedidosCarro.keySet()) {
+            BasicDBObject objetoProducto = new BasicDBObject();
+            Integer cantidadProducto = Integer.parseInt(pedidosCarro.get(key));
+            objetoProducto.put("idProducto", key);
+            objetoProducto.put("cantidad", cantidadProducto);
+            productosPedidos.add(objetoProducto);
+        }
+        return productosPedidos;
+    }
+
 }

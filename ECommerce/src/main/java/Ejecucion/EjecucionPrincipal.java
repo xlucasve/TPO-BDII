@@ -30,17 +30,19 @@ public class EjecucionPrincipal {
         //Conexion con Cassandra
 
         CassandraConnector conexion = new CassandraConnector();
-        conexion.connect("127.0.0.1", 9142);
+        conexion.connect("127.0.0.1", 9042);
         Session session = conexion.getSession();
-        String query = "CREATE KEYSPACE ejemplo WITH replication "
+        String query = "CREATE KEYSPACE IF NOT EXISTS ejemplo WITH replication "
                 + "= {'class':'SimpleStrategy', 'replication_factor':1};";
         session.execute(query);
         session.execute("USE ejemplo");
 
+        System.out.println("Incializado Cassandra");
+
 
         //Fin Cassandra
 
-        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
+        /*String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
 
         Connection conn = DriverManager.getConnection(connectionUrl);
         if (conn != null) {
@@ -60,27 +62,24 @@ public class EjecucionPrincipal {
             System.out.println("Apellido: " + apellido);
             Integer dni = rset.getInt("dni");
             System.out.println("DNI: " + dni);
-        }
+        }*/
 
 
+        //Creacion de conexión a Redis
         JedisPooled jedis = new JedisPooled("localhost", 6379);
 
         MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
         MongoDatabase mongoDatabase = mongoClient.getDatabase("ECommerce");
-        try {
-            mongoDatabase.createCollection("CatalogoProductos");
-        } catch (MongoCommandException e) {
-            System.out.println("Collecion creada exitosamente");
-        }
 
 
-
+        //Creacion de collecciones mongo
         MongoCollection<Document> collectionCatalogoProductos = mongoDatabase.getCollection("CatalogoProductos");
         MongoCollection<Document> collectionUsuario = mongoDatabase.getCollection("Usuarios");
         MongoCollection<Document> collectionListadoPrecios = mongoDatabase.getCollection("ListadoPrecios");
         MongoCollection<Document> collectionPedido = mongoDatabase.getCollection("Pedidos");
 
 
+        //Creacion de productos y actualizacion de precio de 1
         Producto producto = new Producto( "Remera", "Gucci", "Manga abierta",
                 25.0, 12.6, 20.0, 4.7, collectionCatalogoProductos, collectionListadoPrecios);
         Producto producto2 = new Producto( "Campera", "Gucci", "Manga Cerrada",
@@ -109,27 +108,10 @@ public class EjecucionPrincipal {
         carroCompra.eliminarUnProducto(jedis, producto);
         carroCompra.eliminarUnProducto(jedis, producto);
 
-        //Obtener items de carro
-        Map<String, String> pedidosCarro = jedis.hgetAll(carroCompra.getCarroId());
-        for (String key : pedidosCarro.keySet()){
-            String key1 = key;
-            Integer cantidad = Integer.parseInt(pedidosCarro.get(key));
-            System.out.println("Clave: " + key1);
-            System.out.println("CANTIDAD: " + cantidad);
-        }
-        System.out.println("Pedido 1: " + producto.getProductoId());
-        System.out.println("Pedido 2: " + producto2.getProductoId());
-
-
         //Crear nuevo Pedido
         Operador operador = new Operador(1, "Damian", "Galvez", 1243650);
-        Pedido pedido1 = new Pedido(1, 20.4, carroCompra, usuario, operador, collectionPedido);
-        System.out.println(pedido1.getPedidoId());
+        Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, collectionPedido, jedis);
 
-        //Cerramos la conexión
-        jedis.close();
-        mongoClient.close();
-
-
+        System.out.println("Fin");
     }
 }

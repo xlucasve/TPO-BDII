@@ -63,10 +63,10 @@ public class Usuario {
     public void agregarUsuarioAColeccion(MongoCollection<Document> collectionUsuarios){
 
         ArrayList<BasicDBObject> sesionesArray = new ArrayList<>();
-        for (int i = 0; i < this.sesionesDeUsuario.size(); i++){
+        for (SesionUsuario sesionUsuario : this.sesionesDeUsuario) {
             BasicDBObject objetoSesion = new BasicDBObject();
-            objetoSesion.put("inicio", this.sesionesDeUsuario.get(i).getTiempoInicio().getTime());
-            objetoSesion.put("finalizado", this.sesionesDeUsuario.get(i).getTiempoFinalizado().getTime());
+            objetoSesion.put("inicio", sesionUsuario.getTiempoInicio().getTime());
+            objetoSesion.put("finalizado", sesionUsuario.getTiempoFinalizado().getTime());
             sesionesArray.add(objetoSesion);
         }
 
@@ -98,10 +98,10 @@ public class Usuario {
     public void recuperarSesion(MongoCollection<Document> collectionUsuarios){
         //Completar para obtener la ultima sesion unicamente
         Document searchQuery = new Document();
-        searchQuery.put("nombre", nombre);
+        searchQuery.put("nombre", getNombre());
         FindIterable<Document> cursor = collectionUsuarios.find(searchQuery);
         MongoCursor<Document> cursorIterator = cursor.cursor();
-        System.out.println(cursorIterator.next());
+        System.out.println(cursorIterator.next().toJson());
     }
 
 }
