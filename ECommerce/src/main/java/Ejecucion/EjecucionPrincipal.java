@@ -30,18 +30,22 @@ public class EjecucionPrincipal {
         //Conexion con Cassandra
 
         CassandraConnector conexion = new CassandraConnector();
+
+        //CAMBIAR PUERTO DE CASSANDRA A 9142 SI USAS EL OTRO
         conexion.connect("127.0.0.1", 9042);
         Session session = conexion.getSession();
+
+        //PUSE QUE EL KEYSPACE NO SE CREE SI YA EXISTE PARA EVITAR QUE TIRE ERROR
         String query = "CREATE KEYSPACE IF NOT EXISTS ejemplo WITH replication "
                 + "= {'class':'SimpleStrategy', 'replication_factor':1};";
         session.execute(query);
         session.execute("USE ejemplo");
 
         System.out.println("Incializado Cassandra");
-
-
         //Fin Cassandra
 
+
+        //DEJO COMENTADO SQL HASTA QUE ME PONGA A TRABAJAR EN ELLO
         /*String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
 
         Connection conn = DriverManager.getConnection(connectionUrl);
