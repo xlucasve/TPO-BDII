@@ -53,8 +53,8 @@ public class EjecucionPrincipal {
         //Fin Cassandra
 
 
-        //DEJO COMENTADO SQL HASTA QUE ME PONGA A TRABAJAR EN ELLO
-        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
+
+        /*String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
 
         System.out.println("Inicializando SQL...");
@@ -64,7 +64,7 @@ public class EjecucionPrincipal {
         }
         System.out.println("SQL inicializado correctamente");
 
-        Statement stmt = conn.createStatement();
+        Statement stmt = conn.createStatement();*/
 
 
         //Creacion de conexión a Redis
@@ -105,19 +105,20 @@ public class EjecucionPrincipal {
 
         //Testeo de carro de compra
         carroCompra.agregarProducto(jedis, producto);
-        carroCompra.agregarProducto(jedis, producto2);
+        carroCompra.undo(jedis);
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.agregarProducto(jedis, producto2);
-        carroCompra.agregarProducto(jedis, producto);
         carroCompra.eliminarUnProducto(jedis, producto);
-        carroCompra.eliminarUnProducto(jedis, producto);
+        carroCompra.undo(jedis);
+        System.out.println(jedis.hgetAll(carroCompra.getCarroId()));
+
 
         //Crear nuevo Pedido
         Operador operador = new Operador(1, "Damian Wacho", "Galvez", 1243650);
         Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, collectionPedido, jedis);
         String insert = "insert into operadores values ('Damian', 'Galvez', 13456)";
         String insertOperador = "insert into operadores values ('" + operador.getNombreOperador() + "', " + "'" + operador.getApellidoOperador() + "', " + operador.getDniOperador() + " )";
-        stmt.executeUpdate(insertOperador);
+        //stmt.executeUpdate(insertOperador);
 
         System.out.println("Fin");
     }
