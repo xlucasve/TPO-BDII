@@ -14,6 +14,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import conexionesBD.CassandraConnector;
+import conexionesBD.KeyspaceRepository;
 import org.apache.cassandra.schema.SchemaKeyspace;
 import org.bson.Document;
 import redis.clients.jedis.JedisPooled;
@@ -36,9 +37,16 @@ public class EjecucionPrincipal {
         Session session = conexion.getSession();
 
         //PUSE QUE EL KEYSPACE NO SE CREE SI YA EXISTE PARA EVITAR QUE TIRE ERROR
+        /*
         String query = "CREATE KEYSPACE IF NOT EXISTS ejemplo WITH replication "
                 + "= {'class':'SimpleStrategy', 'replication_factor':1};";
         session.execute(query);
+
+         */ //No deberia ser mas necesario
+
+        KeyspaceRepository schemaRepository = new KeyspaceRepository(session);
+        schemaRepository.createKeyspace("ejemplo", "SimpleStrategy", 1);
+
         session.execute("USE ejemplo");
 
         System.out.println("Incializado Cassandra");
@@ -47,6 +55,7 @@ public class EjecucionPrincipal {
 
         //DEJO COMENTADO SQL HASTA QUE ME PONGA A TRABAJAR EN ELLO
         String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
+        // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
 
         System.out.println("Inicializando SQL...");
         Connection conn = DriverManager.getConnection(connectionUrl);
