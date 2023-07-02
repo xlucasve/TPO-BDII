@@ -46,35 +46,28 @@ public class EjecucionPrincipal {
 
 
         //DEJO COMENTADO SQL HASTA QUE ME PONGA A TRABAJAR EN ELLO
-        /*String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
+        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
 
+        System.out.println("Inicializando SQL...");
         Connection conn = DriverManager.getConnection(connectionUrl);
         if (conn != null) {
             System.out.println("Conectado exitosamente");
         }
+        System.out.println("SQL inicializado correctamente");
 
         Statement stmt = conn.createStatement();
 
-        String select = "select * from operadores";
-        System.out.println("Peticion: " + select);
-        ResultSet rset = stmt.executeQuery(select);
-
-        while (rset.next()){
-            String nombre = rset.getString("nombre");
-            System.out.println("Nombre: " + nombre);
-            String apellido = rset.getString("apellido");
-            System.out.println("Apellido: " + apellido);
-            Integer dni = rset.getInt("dni");
-            System.out.println("DNI: " + dni);
-        }*/
-
 
         //Creacion de conexión a Redis
+        System.out.println("Inicializando Redis...");
         JedisPooled jedis = new JedisPooled("localhost", 6379);
+        System.out.println("Inicializado Redis");
 
+        System.out.println("Inicializando MongoDB...");
         MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
         MongoDatabase mongoDatabase = mongoClient.getDatabase("ECommerce");
-
+        System.out.println("Incializado MongoDB");
+        System.out.println("");
 
         //Creacion de collecciones mongo
         MongoCollection<Document> collectionCatalogoProductos = mongoDatabase.getCollection("CatalogoProductos");
@@ -98,10 +91,8 @@ public class EjecucionPrincipal {
 
 
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
-        System.out.println(usuario.getUsuarioId());
         usuario.recuperarSesion(collectionUsuario);
         CarroCompra carroCompra = new CarroCompra(usuario.getUsuarioId());
-        System.out.println(carroCompra.getCarroId());
 
         //Testeo de carro de compra
         carroCompra.agregarProducto(jedis, producto);
@@ -113,8 +104,11 @@ public class EjecucionPrincipal {
         carroCompra.eliminarUnProducto(jedis, producto);
 
         //Crear nuevo Pedido
-        Operador operador = new Operador(1, "Damian", "Galvez", 1243650);
+        Operador operador = new Operador(1, "Damian Wacho", "Galvez", 1243650);
         Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, collectionPedido, jedis);
+        String insert = "insert into operadores values ('Damian', 'Galvez', 13456)";
+        String insertOperador = "insert into operadores values ('" + operador.getNombreOperador() + "', " + "'" + operador.getApellidoOperador() + "', " + operador.getDniOperador() + " )";
+        stmt.executeUpdate(insertOperador);
 
         System.out.println("Fin");
     }
