@@ -3,6 +3,10 @@ package Modelos.Producto;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
+
+import Modelos.LogCambiosProducto.CambioProducto;
+import Modelos.LogCambiosProducto.ProductChangeHandler;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -95,6 +99,21 @@ public class Producto {
         document.put("reviews", reviewsArray);
 
         this.productoId = Objects.requireNonNull(collectionCatalogoProductos.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
+
+        //Para insertar producto nuevo en Cassandra log
+        CambioProducto nuevo = new CambioProducto(
+            this.productoId,
+            this.nombreProducto,
+            this.marcaProducto,
+            this.modeloProducto,
+            this.anchoEnPulgadas,
+            this.alturaEnPulgadas,
+            this.precioProducto,
+            this.calificacionProducto
+        );
+
+        ProductChangeHandler.getInstance(null).saveProductChange(nuevo);  
+        //
     }
 
     private void agregarProductoAListadoPrecios(MongoCollection<Document> collectionListadoPrecios){
@@ -113,5 +132,18 @@ public class Producto {
         Bson updatePrecio = Updates.set("precio", this.precioProducto);
 
         collectionListadoPrecios.updateOne(query, updatePrecio);
+
+        CambioProducto nuevo = new CambioProducto(
+            this.productoId,
+            this.nombreProducto,
+            this.marcaProducto,
+            this.modeloProducto,
+            this.anchoEnPulgadas,
+            this.alturaEnPulgadas,
+            nuevoPrecio,
+            this.calificacionProducto
+        );
+
+        ProductChangeHandler.getInstance(null).saveProductChange(nuevo);
     }
 }

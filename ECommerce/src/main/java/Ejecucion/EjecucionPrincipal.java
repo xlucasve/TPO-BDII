@@ -1,6 +1,7 @@
 package Ejecucion;
 
 import Modelos.CarroCompras.CarroCompra;
+import Modelos.LogCambiosProducto.ProductChangeHandler;
 import Modelos.Operador.Operador;
 import Modelos.Pedidos.Pedido;
 import Modelos.Producto.Producto;
@@ -52,6 +53,12 @@ public class EjecucionPrincipal {
         System.out.println("Incializado Cassandra");
         //Fin Cassandra
 
+        //Cassandra cambios productos table:
+        ProductChangeHandler cambiosCassandra = ProductChangeHandler.getInstance(session);
+
+        cambiosCassandra.createProductChangesTable(); 
+
+        //
 
 
         /*String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
