@@ -1,6 +1,7 @@
 package Ejecucion;
 
 import Modelos.CarroCompras.CarroCompra;
+import Modelos.Factura.GeneradorFactura;
 import Modelos.LogCambiosProducto.ProductChangeHandler;
 import Modelos.Operador.Operador;
 import Modelos.Pedidos.Pedido;
@@ -61,17 +62,17 @@ public class EjecucionPrincipal {
         //
 
 
-        /*String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#";
+        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
 
         System.out.println("Inicializando SQL...");
-        Connection conn = DriverManager.getConnection(connectionUrl);
-        if (conn != null) {
+        Connection connectionSQL = DriverManager.getConnection(connectionUrl);
+        if (connectionSQL != null) {
             System.out.println("Conectado exitosamente");
         }
         System.out.println("SQL inicializado correctamente");
 
-        Statement stmt = conn.createStatement();*/
+        Statement stmt = connectionSQL.createStatement();
 
 
         //Creacion de conexión a Redis
@@ -100,7 +101,7 @@ public class EjecucionPrincipal {
         producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2);
 
 
-        Usuario usuario = new Usuario("Diego", "Gutierrez", "Calle 123", 12345612, CategoriaIVA.A , collectionUsuario);
+        Usuario usuario = new Usuario("Diego", "Gutierrez", "Calle 123", 12345612, CategoriaIVA.A , collectionUsuario, connectionSQL);
         Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
         Date fecha2 = new Date(2023, Calendar.JUNE, 10, 15, 20, 00);
         SesionUsuario sesionUsuario = new SesionUsuario(fecha1, fecha2);
@@ -121,11 +122,12 @@ public class EjecucionPrincipal {
 
 
         //Crear nuevo Pedido
-        Operador operador = new Operador(1, "Damian Wacho", "Galvez", 1243650);
-        Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, collectionPedido, jedis);
+        Operador operador = new Operador("Damian Wacho", "Galvez", 1243650, connectionSQL);
+        Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, carroCompra.getPrecioTotal().intValue(), collectionPedido, jedis);
         String insert = "insert into operadores values ('Damian', 'Galvez', 13456)";
-        String insertOperador = "insert into operadores values ('" + operador.getNombreOperador() + "', " + "'" + operador.getApellidoOperador() + "', " + operador.getDniOperador() + " )";
-        //stmt.executeUpdate(insertOperador);
+        GeneradorFactura generadorFactura = GeneradorFactura.getInstancia();
+
+        generadorFactura.generarFactura(pedido1, operador, pedido1.getCliente(), pedido1.getMontoTotalInt(),"Tarjeta de Credito", connectionSQL);
 
         System.out.println("Fin");
     }

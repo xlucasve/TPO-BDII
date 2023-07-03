@@ -5,6 +5,7 @@ import Modelos.Operador.Operador;
 import Modelos.Usuario.SesionUsuario;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
+import jnr.ffi.annotations.In;
 import org.bson.Document;
 import Modelos.Usuario.Usuario;
 import redis.clients.jedis.JedisPool;
@@ -28,13 +29,16 @@ public class Pedido {
 
     private Operador operadorResponsable;
 
+    private Integer montoTotalInt;
 
-    public Pedido(Integer condicionIVA, Double descuento,Double precioTotal, String idCarroCompra, Usuario cliente, Operador operadorResponsable, MongoCollection<Document> collectionPedido, JedisPooled jedis) {
+
+    public Pedido(Integer condicionIVA, Double descuento, Double precioTotal, String idCarroCompra, Usuario cliente, Operador operadorResponsable, Integer montoTotalInt, MongoCollection<Document> collectionPedido, JedisPooled jedis) {
         this.condicionIVA = condicionIVA;
         this.descuento = descuento;
         this.idCarroCompra = idCarroCompra;
         this.cliente = cliente;
         this.operadorResponsable = operadorResponsable;
+        this.montoTotalInt = montoTotalInt;
         guardarPedido(precioTotal, collectionPedido, jedis);
     }
 
@@ -52,6 +56,14 @@ public class Pedido {
 
     public String getIdCarroCompra() {
         return idCarroCompra;
+    }
+
+    public Usuario getCliente() {
+        return cliente;
+    }
+
+    public Integer getMontoTotalInt() {
+        return montoTotalInt;
     }
 
     public Operador getOperadorResponsable() {

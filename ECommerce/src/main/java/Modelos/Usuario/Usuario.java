@@ -8,6 +8,8 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
+
+import java.sql.*;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +17,7 @@ import java.util.Date;
 public class Usuario {
 
     private String usuarioId;
+    private Integer usuarioIdSQL;
     private String nombre;
     private String apellido;
     private String direccion;
@@ -23,7 +26,7 @@ public class Usuario {
     private CategoriaUsuario categoriaUsuario;
     private ArrayList<SesionUsuario> sesionesDeUsuario;
 
-    public Usuario(String nombre, String apellido, String direccion, Integer documentoIdentidad, CategoriaIVA categoriaIVA, MongoCollection<Document> collectionUsuarios) {
+    public Usuario(String nombre, String apellido, String direccion, Integer documentoIdentidad, CategoriaIVA categoriaIVA, MongoCollection<Document> collectionUsuarios, Connection connectionSQL) throws SQLException {
         this.nombre = nombre;
         this.apellido = apellido;
         this.direccion = direccion;
@@ -34,6 +37,7 @@ public class Usuario {
         SesionUsuario sesionUsuario = new SesionUsuario(new Date(), new Date());
         this.sesionesDeUsuario.add(sesionUsuario);
         agregarUsuarioAColeccion(collectionUsuarios);
+        insertarCliente(connectionSQL);
     }
 
     public String getUsuarioId() {
@@ -58,6 +62,10 @@ public class Usuario {
 
     public CategoriaIVA getCategoriaIVA() {
         return categoriaIVA;
+    }
+
+    public Integer getUsuarioIdSQL() {
+        return usuarioIdSQL;
     }
 
     public void agregarUsuarioAColeccion(MongoCollection<Document> collectionUsuarios){
@@ -102,6 +110,25 @@ public class Usuario {
         FindIterable<Document> cursor = collectionUsuarios.find(searchQuery);
         MongoCursor<Document> cursorIterator = cursor.cursor();
         System.out.println("Arreglar obtener solo ultima sesion");
+    }
+
+    public void insertarCliente(Connection connectionSQL) throws SQLException {
+        PreparedStatement statementCliente = connectionSQL.prepareStatement("insert into clientes values (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        statementCliente.setString(1, getUsuarioId());
+        statementCliente.setString(2, getNombre());
+        statementCliente.setString(3, getApellido());
+        statementCliente.setString(4, getDireccion());
+        statementCliente.setInt(5, getDocumentoIdentidad());
+
+        statementCliente.execute();
+
+        ResultSet rset = statementCliente.getGeneratedKeys();
+
+        if(rset.next()){
+            this.usuarioIdSQL = rset.getInt(1);
+        } else{
+            System.out.println("No se genero correctamente el Id");
+        }
     }
 
 }
