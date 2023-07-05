@@ -77,6 +77,20 @@ public class Producto {
         return calificacionProducto;
     }
 
+    private CambioProducto cambiosProductoDTO() {
+        return new CambioProducto(
+            this.productoId,
+            this.nombreProducto,
+            this.marcaProducto,
+            this.modeloProducto,
+            this.anchoEnPulgadas,
+            this.alturaEnPulgadas,
+            this.precioProducto,
+            this.calificacionProducto
+            );
+    }
+
+
     private void agregarProductoACatalogo(MongoCollection<Document> collectionCatalogoProductos){
 
         ArrayList<BasicDBObject> reviewsArray = new ArrayList<>();
@@ -101,18 +115,8 @@ public class Producto {
         this.productoId = Objects.requireNonNull(collectionCatalogoProductos.insertOne(document).getInsertedId()).asObjectId().getValue().toString();
 
         //Para insertar producto nuevo en Cassandra log
-        CambioProducto nuevo = new CambioProducto(
-            this.productoId,
-            this.nombreProducto,
-            this.marcaProducto,
-            this.modeloProducto,
-            this.anchoEnPulgadas,
-            this.alturaEnPulgadas,
-            this.precioProducto,
-            this.calificacionProducto
-        );
 
-        ProductChangeHandler.getInstance(null).saveProductChange(nuevo);  
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());  
         //
     }
 
@@ -133,17 +137,81 @@ public class Producto {
 
         collectionListadoPrecios.updateOne(query, updatePrecio);
 
-        CambioProducto nuevo = new CambioProducto(
-            this.productoId,
-            this.nombreProducto,
-            this.marcaProducto,
-            this.modeloProducto,
-            this.anchoEnPulgadas,
-            this.alturaEnPulgadas,
-            nuevoPrecio,
-            this.calificacionProducto
-        );
-
-        ProductChangeHandler.getInstance(null).saveProductChange(nuevo);
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
     }
+
+    public void actualizarNombreProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevoNombre) {
+        this.nombreProducto = nuevoNombre;
+
+        Document query = new Document();
+        query.put("productoId", this.productoId);
+
+        Bson updateNombre = Updates.set("nombreProducto", this.nombreProducto);
+        collectionCatalogoProductos.updateOne(query, updateNombre);
+
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+    }
+
+    public void actualizarMarcaProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevaMarca) {
+         this.marcaProducto = nuevaMarca;
+
+        Document query = new Document();
+        query.put("marcaProducto", this.marcaProducto);
+
+        Bson updateMarca = Updates.set("marcaProducto", this.marcaProducto);
+        collectionCatalogoProductos.updateOne(query, updateMarca);
+
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+    }
+
+    public void actualizarModeloProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevoModelo) {
+        this.modeloProducto = nuevoModelo;
+
+        Document query = new Document();
+        query.put("modeloProducto", this.modeloProducto);
+
+        Bson updateNombre = Updates.set("nombreProducto", this.nombreProducto);
+        collectionCatalogoProductos.updateOne(query, updateNombre);
+
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+    }
+
+    public void actualizarAnchoEnPulgadas(MongoCollection<Document> collectionCatalogoProductos, Double nuevoAnchoEnPulgadas) {
+        this.anchoEnPulgadas = nuevoAnchoEnPulgadas;
+
+        Document query = new Document();
+        query.put("anchoEnPulgadas", this.anchoEnPulgadas);
+
+        Bson updateField = Updates.set("anchoEnPulgadas", this.anchoEnPulgadas);
+        collectionCatalogoProductos.updateOne(query, updateField);
+
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+    }
+
+    public void actualizarAlturaEnPulgadas(MongoCollection<Document> collectionCatalogoProductos, Double nuevaAlturaEnPulgadas) {
+        this.alturaEnPulgadas = nuevaAlturaEnPulgadas;
+
+        Document query = new Document();
+        query.put("alturaEnPulgadas", this.alturaEnPulgadas);
+
+        Bson updateField = Updates.set("alturaEnPulgadas", this.alturaEnPulgadas);
+        collectionCatalogoProductos.updateOne(query, updateField);
+
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+    }
+
+    public void actualizarCalificacionProducto(MongoCollection<Document> collectionCatalogoProductos, Double nuevaCalificacion) {
+        this.calificacionProducto = nuevaCalificacion;
+
+        Document query = new Document();
+        query.put("calificacionProducto", this.calificacionProducto);
+
+        Bson updateField = Updates.set("calificacionProducto", this.calificacionProducto);
+        collectionCatalogoProductos.updateOne(query, updateField);
+
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+    }
+
+
+
 }

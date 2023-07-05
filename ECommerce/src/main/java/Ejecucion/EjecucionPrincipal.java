@@ -61,7 +61,7 @@ public class EjecucionPrincipal {
 
         //
 
-
+        
         String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
 
@@ -73,7 +73,7 @@ public class EjecucionPrincipal {
         System.out.println("SQL inicializado correctamente");
 
         Statement stmt = connectionSQL.createStatement();
-
+        
 
         //Creacion de conexión a Redis
         System.out.println("Inicializando Redis...");
@@ -98,9 +98,25 @@ public class EjecucionPrincipal {
                 25.0, 12.6, 20.0, 4.7, collectionCatalogoProductos, collectionListadoPrecios);
         Producto producto2 = new Producto( "Campera", "Gucci", "Manga Cerrada",
                 25.0, 12.6, 150.0, 4.7, collectionCatalogoProductos, collectionListadoPrecios);
+        
+        //Operaciones de actualizacion de atributos de producto en el catalogo:
+
         producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2);
+        
+        producto.actualizarNombreProducto(collectionCatalogoProductos, "Remera Blanca");
+        
+        producto.actualizarModeloProducto(collectionCatalogoProductos, "Manga Cortada");
+
+        producto.actualizarAnchoEnPulgadas(collectionCatalogoProductos, 35.5);
+
+        producto.actualizarAlturaEnPulgadas(collectionCatalogoProductos, 22.6);
+
+        producto.actualizarCalificacionProducto(collectionCatalogoProductos, 7.7);
+
+        //
 
 
+        
         Usuario usuario = new Usuario("Diego", "Gutierrez", "Calle 123", 12345612, CategoriaIVA.A , collectionUsuario, connectionSQL);
         Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
         Date fecha2 = new Date(2023, Calendar.JUNE, 10, 15, 20, 00);
@@ -110,7 +126,7 @@ public class EjecucionPrincipal {
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
         usuario.recuperarSesion(collectionUsuario);
         CarroCompra carroCompra = new CarroCompra(usuario.getUsuarioId());
-
+        
         //Testeo de carro de compra
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.undo(jedis);
@@ -120,7 +136,7 @@ public class EjecucionPrincipal {
         carroCompra.undo(jedis);
         System.out.println(jedis.hgetAll(carroCompra.getCarroId()));
 
-
+        
         //Crear nuevo Pedido
         Operador operador = new Operador("Damian Wacho", "Galvez", 1243650, connectionSQL);
         Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, carroCompra.getPrecioTotal().intValue(), collectionPedido, jedis);
@@ -128,7 +144,7 @@ public class EjecucionPrincipal {
         GeneradorFactura generadorFactura = GeneradorFactura.getInstancia();
 
         generadorFactura.generarFactura(pedido1, operador, pedido1.getCliente(), pedido1.getMontoTotalInt(),"Tarjeta de Credito", connectionSQL);
-
+        
         System.out.println("Fin");
     }
 }
