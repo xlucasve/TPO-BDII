@@ -64,7 +64,7 @@ public class EjecucionPrincipal {
         
         String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
-
+        
         System.out.println("Inicializando SQL...");
         Connection connectionSQL = DriverManager.getConnection(connectionUrl);
         if (connectionSQL != null) {
@@ -114,7 +114,9 @@ public class EjecucionPrincipal {
         producto.actualizarCalificacionProducto(collectionCatalogoProductos, 7.7);
 
         //
-
+       
+        //Consultar log producotos cassandra por id de producto e imprimir.
+        ProductChangeHandler.getInstance(session).consultarLogPorId(producto.getProductoId());
 
         
         Usuario usuario = new Usuario("Diego", "Gutierrez", "Calle 123", 12345612, CategoriaIVA.A , collectionUsuario, connectionSQL);
@@ -127,6 +129,7 @@ public class EjecucionPrincipal {
         usuario.recuperarSesion(collectionUsuario);
         CarroCompra carroCompra = new CarroCompra(usuario.getUsuarioId());
         
+
         //Testeo de carro de compra
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.undo(jedis);

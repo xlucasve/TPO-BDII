@@ -39,5 +39,12 @@
             <artifactId>cassandra-unit</artifactId>
             <version>3.0.0.1</version>
         </dependency>
+    
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.17</version>
+      </dependency>
+
     </dependencies>
 </project>

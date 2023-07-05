@@ -6,13 +6,16 @@ import java.time.ZoneOffset;
 
 import org.apache.cassandra.schema.SchemaKeyspace;
 import com.datastax.driver.core.Session;
-
+import com.mysql.cj.protocol.Resultset;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+//import org.apache.commons.text.
 
 
 public class ProductChangeHandler {
@@ -69,8 +72,40 @@ public class ProductChangeHandler {
         
        
 
-    );
-}
+        );
+    }
+
+    //quizas dividir en dos metodos, uno que devuelva el objeto resultado y otro que lo parsee/imprima.
+    public void consultarLogPorId(String idProducto) {
+
+        String query = "SELECT * FROM product_changes WHERE productid = '" + idProducto + "' ORDER BY fechamodificacion;";
+        ResultSet resultado = this.session.execute(query);
+
+        System.out.println("productid                | fechamodificacion         | alturaenpulgadas | anchoenpulgadas | calificacionproducto | marcaproducto | modeloproducto | nombreproducto | precioproducto");
+        System.out.println("--------------------------+---------------------------------+------------------+-----------------+----------------------+---------------+----------------+----------------+----------------");
+
+        for(Row row: resultado) {
+            
+            System.out.print(row.getString("productid") + "|");
+            System.out.print(" " + row.getTimestamp("fechamodificacion") + "|");
+            System.out.print(" " + row.getDouble("alturaenpulgadas") + "           |");
+            System.out.print(" " + row.getDouble("anchoenpulgadas") + "           |");
+            System.out.print(" "+row.getDouble("calificacionproducto") + "                  |");
+            System.out.print(" "+row.getString("marcaproducto") + "         |");
+            System.out.print(" " + row.getString("modeloproducto") + "  |");
+            System.out.print(" " + row.getString("nombreproducto") + "         |");
+            System.out.print(" " + row.getDouble("precioproducto"));
+
+            System.out.println();
+
+
+        }
+
+
+
+
+
+    }
 
 
 }
