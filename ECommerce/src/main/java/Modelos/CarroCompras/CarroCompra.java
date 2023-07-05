@@ -43,12 +43,14 @@ public class CarroCompra {
 
     public void undo(JedisPooled jedis){
         if(mementos.size() > 0){
+            this.precioTotal = 0.0;
             lineaProductos.clear();
             copiarLineas(mementos.getLast().obtenerLineas());
             mementos.removeLast();
             jedis.del(this.carroId);
 
             for (LineaProducto lineaProducto : lineaProductos){
+                this.precioTotal += lineaProducto.getCantidad() * lineaProducto.getProducto().getPrecioProducto();
                 jedis.hset(this.carroId, lineaProducto.getIdLinea(), lineaProducto.getCantidad().toString());
             }
         }
