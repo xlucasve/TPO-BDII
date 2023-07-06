@@ -9,6 +9,7 @@ import Modelos.LogCambiosProducto.ProductChangeHandler;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -149,7 +150,7 @@ public class Producto {
         this.nombreProducto = nuevoNombre;
 
         Document query = new Document();
-        query.put("productoId", this.productoId);
+        query.put("_id", new ObjectId(this.productoId));
 
         Bson updateNombre = Updates.set("nombreProducto", this.nombreProducto);
         collectionCatalogoProductos.updateOne(query, updateNombre);
@@ -161,7 +162,7 @@ public class Producto {
          this.marcaProducto = nuevaMarca;
 
         Document query = new Document();
-        query.put("marcaProducto", this.marcaProducto);
+        query.put("_id", new ObjectId(this.productoId));
 
         Bson updateMarca = Updates.set("marcaProducto", this.marcaProducto);
         collectionCatalogoProductos.updateOne(query, updateMarca);
@@ -173,10 +174,10 @@ public class Producto {
         this.modeloProducto = nuevoModelo;
 
         Document query = new Document();
-        query.put("modeloProducto", this.modeloProducto);
+        query.put("_id", new ObjectId(this.productoId));
 
-        Bson updateNombre = Updates.set("nombreProducto", this.nombreProducto);
-        collectionCatalogoProductos.updateOne(query, updateNombre);
+        Bson updateModelo = Updates.set("modeloProducto", this.modeloProducto);
+        collectionCatalogoProductos.updateOne(query, updateModelo);
 
         ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
     }
@@ -185,7 +186,7 @@ public class Producto {
         this.anchoEnPulgadas = nuevoAnchoEnPulgadas;
 
         Document query = new Document();
-        query.put("anchoEnPulgadas", this.anchoEnPulgadas);
+        query.put("_id", new ObjectId(this.productoId));
 
         Bson updateField = Updates.set("anchoEnPulgadas", this.anchoEnPulgadas);
         collectionCatalogoProductos.updateOne(query, updateField);
@@ -197,7 +198,7 @@ public class Producto {
         this.alturaEnPulgadas = nuevaAlturaEnPulgadas;
 
         Document query = new Document();
-        query.put("alturaEnPulgadas", this.alturaEnPulgadas);
+        query.put("_id", new ObjectId(this.productoId));
 
         Bson updateField = Updates.set("alturaEnPulgadas", this.alturaEnPulgadas);
         collectionCatalogoProductos.updateOne(query, updateField);
@@ -209,7 +210,7 @@ public class Producto {
         this.calificacionProducto = nuevaCalificacion;
 
         Document query = new Document();
-        query.put("calificacionProducto", this.calificacionProducto);
+        query.put("_id", new ObjectId(this.productoId));
 
         Bson updateField = Updates.set("calificacionProducto", this.calificacionProducto);
         collectionCatalogoProductos.updateOne(query, updateField);
