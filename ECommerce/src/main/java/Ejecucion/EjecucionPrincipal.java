@@ -168,7 +168,7 @@ public class EjecucionPrincipal {
         System.out.println("Redis - 2 productos agregados al carrito");
         JOptionPane.showMessageDialog(null, "OK - Para eliminar un producto del carrito");
         carroCompra.eliminarUnProducto(jedis, producto);
-        System.out.println("Redis - 1 operacion deshecha del carrito");
+        System.out.println("Redis - 1 producto eliminado del carrito");
         JOptionPane.showMessageDialog(null, "OK - Para deshacer la operacion anterior");
         carroCompra.undo(jedis);
         System.out.println("Redis - 1 operacion deshecha del carrito");
