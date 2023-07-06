@@ -66,7 +66,12 @@ public class EjecucionPrincipal {
         //String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
         String connectionUrl = "jdbc:sqlserver://localhost:1433;encrypt=false;databaseName=ECommerce;user=SA;password=Str0ngPassword@"; //Conexion Joaco
+        
+        //Creacion inicial de tablas por JDBC.
+        //Comentar si ya se tienen creadas.
 
+        //new CreacionTablas().CreacionInicialTablas(connectionUrl);
+        //
 
         System.out.println("Inicializando SQL...");
         Connection connectionSQL = DriverManager.getConnection(connectionUrl);
@@ -75,20 +80,6 @@ public class EjecucionPrincipal {
         }
         System.out.println("SQL inicializado correctamente");
 
-<<<<<<< HEAD
-        Statement stmt = connectionSQL.createStatement();
-
-        //Creacion inicial de tablas por JDBC.
-        //Comentar si ya se tienen creadas.
-
-        //new CreacionTablas().CreacionInicialTablas(connectionUrl);
-    
-
-        //
-        
-
-=======
->>>>>>> 1616d3518373d2c44476008e948605272342c8f7
         //Creacion de conexión a Redis
         System.out.println("Inicializando Redis...");
         JedisPooled jedis = new JedisPooled("localhost", 6379);
