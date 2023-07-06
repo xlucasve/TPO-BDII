@@ -35,7 +35,7 @@ public class ProductChangeHandler {
     }
 
   public void createProductChangesTable() {
-    session.execute("CREATE TABLE IF NOT EXISTS ejemplo.product_changes (" +
+    session.execute("CREATE TABLE IF NOT EXISTS product_logs.product_changes (" +
         "productId text, " +
         "fechaModificacion timestamp, " +
         "nombreProducto text, " +
@@ -57,7 +57,7 @@ public class ProductChangeHandler {
     String fechaFormateada = fechaModificacion.format(formatter);
     long timestamp = fechaModificacion.toInstant(ZoneOffset.UTC).toEpochMilli();    
 
-    session.execute("INSERT INTO ejemplo.product_changes " +
+    session.execute("INSERT INTO product_logs.product_changes " +
         "(productId, fechaModificacion, nombreProducto, marcaProducto, modeloProducto, anchoEnPulgadas, alturaEnPulgadas, precioAnterior, precioProducto, calificacionProducto) " +
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         cambioProducto.getProductoId(),

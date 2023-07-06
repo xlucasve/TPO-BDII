@@ -26,6 +26,9 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 public class EjecucionPrincipal {
     public static void main(String[] args) throws SQLException {
@@ -48,13 +51,14 @@ public class EjecucionPrincipal {
          */ //No deberia ser mas necesario
 
         KeyspaceRepository schemaRepository = new KeyspaceRepository(session);
-        schemaRepository.createKeyspace("ejemplo", "SimpleStrategy", 1);
+        schemaRepository.createKeyspace("product_logs", "SimpleStrategy", 1);
 
         session.execute("USE ejemplo");
 
         System.out.println("Incializado Cassandra");
         //Fin Cassandra
 
+        
         //Cassandra cambios productos table:
         ProductChangeHandler cambiosCassandra = ProductChangeHandler.getInstance(session);
 
@@ -97,6 +101,7 @@ public class EjecucionPrincipal {
         MongoCollection<Document> collectionListadoPrecios = mongoDatabase.getCollection("ListadoPrecios");
         MongoCollection<Document> collectionPedido = mongoDatabase.getCollection("Pedidos");
 
+        JOptionPane.showMessageDialog(null, "OK - Para continuar con la creacion de productos en MongoDB");
 
         //Creacion de productos y actualizacion de precio de 1
         Producto producto = new Producto( "Remera", "Gucci", "Manga abierta",
@@ -104,7 +109,15 @@ public class EjecucionPrincipal {
         Producto producto2 = new Producto( "Campera", "Gucci", "Manga Cerrada",
                 25.0, 12.6, 150.0, 4.7, collectionCatalogoProductos, collectionListadoPrecios);
         
+        System.out.println("MongoDB - Dos productos creados en el catalogo");
+        System.out.println("Cassandra - Para consultar el log en cqlsh: \n USE product_logs; \n SELECT * FROM product_changes;");
+
+
         //Operaciones de actualizacion de atributos de producto en el catalogo:
+
+        //Scanner myObj = new Scanner(System.in);
+        //System.out.println("Precione enter para continuar con la actualizacion de productos");
+        JOptionPane.showMessageDialog(null, "OK - Para continuar con la Actualizacion de Productos");
 
         producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2);
         
@@ -118,12 +131,16 @@ public class EjecucionPrincipal {
 
         producto.actualizarCalificacionProducto(collectionCatalogoProductos, 7.7);
 
+        System.out.println("MongoDB - 6 atributos actualizados del producto - Consultar log Cassandra");
+        System.out.println("Consulta para cqlsh: " + "SELECT * FROM product_changes WHERE productid = '" + producto.getProductoId() + "' ORDER BY fechamodificacion;");
         //
        
-        //Consultar log producotos cassandra por id de producto e imprimir.
-        ProductChangeHandler.getInstance(session).consultarLogPorId(producto.getProductoId());
+        //Consultar log productos cassandra por id de producto e imprimir.
+        //ProductChangeHandler.getInstance(session).consultarLogPorId(producto.getProductoId());
         //
         
+        JOptionPane.showMessageDialog(null, "OK - Para continuar con la creacion de un Usuario");
+
         Usuario usuario = new Usuario("Diego", "Gutierrez", "Calle 123", 12345612, CategoriaIVA.A , collectionUsuario, connectionSQL);
         Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
         Date fecha2 = new Date(2023, Calendar.JUNE, 10, 15, 20, 00);
@@ -132,33 +149,53 @@ public class EjecucionPrincipal {
 
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
 
+        System.out.println("SQL - Un usuario nuevo creado.");
+
+        JOptionPane.showMessageDialog(null, "OK - Para continuar con la creacion de un carro de compras.");
         //Creacion de carro de compra para el usuario
         CarroCompra carroCompra = new CarroCompra(usuario.getUsuarioId());
         
-
+        JOptionPane.showMessageDialog(null, "OK - Para agregar un producto al carrito");
         //Testeo de carro de compra
         carroCompra.agregarProducto(jedis, producto);
+        System.out.println("Redis - 1 producto agregado al carrito");
+        JOptionPane.showMessageDialog(null, "OK - Para deshacer la operacion anterior");
         carroCompra.undo(jedis);
+        System.out.println("Redis - 1 operacion deshecha del carrito");
+        JOptionPane.showMessageDialog(null, "OK - Para agregar dos productos al carrito");
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.agregarProducto(jedis, producto2);
+        System.out.println("Redis - 2 productos agregados al carrito");
+        JOptionPane.showMessageDialog(null, "OK - Para eliminar un producto del carrito");
         carroCompra.eliminarUnProducto(jedis, producto);
+        System.out.println("Redis - 1 operacion deshecha del carrito");
+        JOptionPane.showMessageDialog(null, "OK - Para deshacer la operacion anterior");
         carroCompra.undo(jedis);
+        System.out.println("Redis - 1 operacion deshecha del carrito");
+
+        JOptionPane.showMessageDialog(null, "OK - Para imprimir el id + contenido del carrito");
         System.out.println();
         System.out.println("Id de este carro de compra: " + usuario.getUsuarioId());
         System.out.println("Productos en este carro y su cantidad: ");
         System.out.println(jedis.hgetAll(carroCompra.getCarroId()));
         System.out.println();
 
-                
+        JOptionPane.showMessageDialog(null, "OK - Para crear un nuevo pedido");
         //Crear nuevo Pedido
         Operador operador = new Operador("Damian Wacho", "Galvez", 1243650, connectionSQL);
         Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, carroCompra.getPrecioTotal().intValue(), collectionPedido, jedis);
+        
+        System.out.println("Nuevo pedido creado por el operador: " + operador.getNombreOperador());
 
-
+        JOptionPane.showMessageDialog(null, "OK - Para generar una factura del pedido");
         //Obtenemos el generador de las facturas y creamos una
         GeneradorFactura generadorFactura = GeneradorFactura.getInstancia();
         generadorFactura.generarFactura(pedido1, operador, pedido1.getCliente(), pedido1.getMontoTotalInt(),"Tarjeta de Credito", connectionSQL);
         
+        System.out.println("SQL - Factura generada");
+
+        JOptionPane.showMessageDialog(null, "OK - Para finalizar");
+
         System.out.println("Fin");
         System.out.println("Cerrar el proyecto");
     }
