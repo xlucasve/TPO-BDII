@@ -48,7 +48,5 @@ public class Operador {
         } else{
             System.out.println("No se genero correctamente el id");
         }
-
-        System.out.println(idOperador);
     }
 }

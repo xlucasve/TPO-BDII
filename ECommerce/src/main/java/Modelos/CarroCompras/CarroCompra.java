@@ -108,7 +108,6 @@ public class CarroCompra {
             }
         }
         this.precioTotal -= producto.getPrecioProducto();
-        System.out.println("producto eliminado");
     }
 
 
