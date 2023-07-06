@@ -67,9 +67,9 @@ public class EjecucionPrincipal {
         //
 
         
-        //String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
+        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
-        String connectionUrl = "jdbc:sqlserver://localhost:1433;encrypt=false;databaseName=ECommerce;user=SA;password=Str0ngPassword@"; //Conexion Joaco
+        //String connectionUrl = "jdbc:sqlserver://localhost:1433;encrypt=false;databaseName=ECommerce;user=SA;password=Str0ngPassword@"; //Conexion Joaco
         
         //Creacion inicial de tablas por JDBC.
         //Comentar si ya se tienen creadas.
@@ -104,6 +104,10 @@ public class EjecucionPrincipal {
         JOptionPane.showMessageDialog(null, "OK - Para continuar con la creacion de productos en MongoDB");
 
         //Creacion de productos y actualizacion de precio de 1
+
+        Operador operador = new Operador("Damian", "Galvez", 1243650, connectionSQL);
+
+
         Producto producto = new Producto( "Remera", "Gucci", "Manga abierta",
                 25.0, 12.6, 20.0, 4.7, collectionCatalogoProductos, collectionListadoPrecios);
         Producto producto2 = new Producto( "Campera", "Gucci", "Manga Cerrada",
@@ -119,19 +123,19 @@ public class EjecucionPrincipal {
         //System.out.println("Precione enter para continuar con la actualizacion de productos");
         JOptionPane.showMessageDialog(null, "OK - Para continuar con la Actualizacion de Productos");
 
-        producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2);
+        producto.actualizarPrecioProducto(collectionListadoPrecios, 10.2, operador.getIdOperador().toString());
         
-        producto.actualizarNombreProducto(collectionCatalogoProductos, "Remera Blanca");
+        producto.actualizarNombreProducto(collectionCatalogoProductos, "Remera Blanca", operador.getIdOperador().toString());
 
-        producto.actualizarMarcaProducto(collectionCatalogoProductos, "Marca Alta Gama Inc.");
+        producto.actualizarMarcaProducto(collectionCatalogoProductos, "Marca Alta Gama Inc.", operador.getIdOperador().toString());
         
-        producto.actualizarModeloProducto(collectionCatalogoProductos, "Manga Cortada");
+        producto.actualizarModeloProducto(collectionCatalogoProductos, "Manga Cortada", operador.getIdOperador().toString());
 
-        producto.actualizarAnchoEnPulgadas(collectionCatalogoProductos, 35.5);
+        producto.actualizarAnchoEnPulgadas(collectionCatalogoProductos, 35.5, operador.getIdOperador().toString());
 
-        producto.actualizarAlturaEnPulgadas(collectionCatalogoProductos, 22.6);
+        producto.actualizarAlturaEnPulgadas(collectionCatalogoProductos, 22.6, operador.getIdOperador().toString());
 
-        producto.actualizarCalificacionProducto(collectionCatalogoProductos, 7.7);
+        producto.actualizarCalificacionProducto(collectionCatalogoProductos, 7.7, operador.getIdOperador().toString());
 
         System.out.println("MongoDB - 6 atributos actualizados del producto - Consultar log Cassandra");
         System.out.println("Consulta para cqlsh: " + "SELECT * FROM product_changes WHERE productid = '" + producto.getProductoId() + "' ORDER BY fechamodificacion;");
@@ -164,7 +168,8 @@ public class EjecucionPrincipal {
         JOptionPane.showMessageDialog(null, "OK - Para deshacer la operacion anterior");
         carroCompra.undo(jedis);
         System.out.println("Redis - 1 operacion deshecha del carrito");
-        JOptionPane.showMessageDialog(null, "OK - Para agregar dos productos al carrito");
+        JOptionPane.showMessageDialog(null, "OK - Para agregar tres productos al carrito (1 repetido)");
+        carroCompra.agregarProducto(jedis, producto);
         carroCompra.agregarProducto(jedis, producto);
         carroCompra.agregarProducto(jedis, producto2);
         System.out.println("Redis - 2 productos agregados al carrito");
@@ -184,7 +189,6 @@ public class EjecucionPrincipal {
 
         JOptionPane.showMessageDialog(null, "OK - Para crear un nuevo pedido");
         //Crear nuevo Pedido
-        Operador operador = new Operador("Damian Wacho", "Galvez", 1243650, connectionSQL);
         Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, carroCompra.getPrecioTotal().intValue(), collectionPedido, jedis);
         
         System.out.println("Nuevo pedido creado por el operador: " + operador.getNombreOperador());

@@ -80,7 +80,7 @@ public class Producto {
         return calificacionProducto;
     }
 
-    private CambioProducto cambiosProductoDTO() {
+    private CambioProducto cambiosProductoDTO(String operadorId) {
         return new CambioProducto(
             this.productoId,
             this.nombreProducto,
@@ -90,7 +90,9 @@ public class Producto {
             this.alturaEnPulgadas,
             this.precioProducto,
             this.calificacionProducto,
-            this.precioAnterior
+            this.precioAnterior,
+            operadorId
+
             );
     }
 
@@ -120,7 +122,7 @@ public class Producto {
 
         //Para insertar producto nuevo en Cassandra log
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());  
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO("0"));
         //
     }
 
@@ -131,7 +133,7 @@ public class Producto {
         collectionListadoPrecios.insertOne(document);
     }
 
-    public void actualizarPrecioProducto(MongoCollection<Document> collectionListadoPrecios, Double nuevoPrecio){
+    public void actualizarPrecioProducto(MongoCollection<Document> collectionListadoPrecios, Double nuevoPrecio, String operadorId){
         
         this.precioAnterior = this.precioProducto;
         this.precioProducto = nuevoPrecio;
@@ -143,10 +145,10 @@ public class Producto {
 
         collectionListadoPrecios.updateOne(query, updatePrecio);
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO(operadorId));
     }
 
-    public void actualizarNombreProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevoNombre) {
+    public void actualizarNombreProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevoNombre, String operadorId) {
         this.nombreProducto = nuevoNombre;
 
         Document query = new Document();
@@ -155,10 +157,10 @@ public class Producto {
         Bson updateNombre = Updates.set("nombreProducto", this.nombreProducto);
         collectionCatalogoProductos.updateOne(query, updateNombre);
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO(operadorId));
     }
 
-    public void actualizarMarcaProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevaMarca) {
+    public void actualizarMarcaProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevaMarca, String operadorId) {
          this.marcaProducto = nuevaMarca;
 
         Document query = new Document();
@@ -167,10 +169,10 @@ public class Producto {
         Bson updateMarca = Updates.set("marcaProducto", this.marcaProducto);
         collectionCatalogoProductos.updateOne(query, updateMarca);
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO(operadorId));
     }
 
-    public void actualizarModeloProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevoModelo) {
+    public void actualizarModeloProducto(MongoCollection<Document> collectionCatalogoProductos, String nuevoModelo, String operadorId) {
         this.modeloProducto = nuevoModelo;
 
         Document query = new Document();
@@ -179,10 +181,10 @@ public class Producto {
         Bson updateModelo = Updates.set("modeloProducto", this.modeloProducto);
         collectionCatalogoProductos.updateOne(query, updateModelo);
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO(operadorId));
     }
 
-    public void actualizarAnchoEnPulgadas(MongoCollection<Document> collectionCatalogoProductos, Double nuevoAnchoEnPulgadas) {
+    public void actualizarAnchoEnPulgadas(MongoCollection<Document> collectionCatalogoProductos, Double nuevoAnchoEnPulgadas, String operadorId) {
         this.anchoEnPulgadas = nuevoAnchoEnPulgadas;
 
         Document query = new Document();
@@ -191,10 +193,10 @@ public class Producto {
         Bson updateField = Updates.set("anchoEnPulgadas", this.anchoEnPulgadas);
         collectionCatalogoProductos.updateOne(query, updateField);
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO(operadorId));
     }
 
-    public void actualizarAlturaEnPulgadas(MongoCollection<Document> collectionCatalogoProductos, Double nuevaAlturaEnPulgadas) {
+    public void actualizarAlturaEnPulgadas(MongoCollection<Document> collectionCatalogoProductos, Double nuevaAlturaEnPulgadas, String operadorId) {
         this.alturaEnPulgadas = nuevaAlturaEnPulgadas;
 
         Document query = new Document();
@@ -203,10 +205,10 @@ public class Producto {
         Bson updateField = Updates.set("alturaEnPulgadas", this.alturaEnPulgadas);
         collectionCatalogoProductos.updateOne(query, updateField);
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO(operadorId));
     }
 
-    public void actualizarCalificacionProducto(MongoCollection<Document> collectionCatalogoProductos, Double nuevaCalificacion) {
+    public void actualizarCalificacionProducto(MongoCollection<Document> collectionCatalogoProductos, Double nuevaCalificacion, String operadorId) {
         this.calificacionProducto = nuevaCalificacion;
 
         Document query = new Document();
@@ -215,7 +217,7 @@ public class Producto {
         Bson updateField = Updates.set("calificacionProducto", this.calificacionProducto);
         collectionCatalogoProductos.updateOne(query, updateField);
 
-        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO());
+        ProductChangeHandler.getInstance(null).saveProductChange(cambiosProductoDTO(operadorId));
     }
 
 

@@ -30,7 +30,6 @@ public class ProductChangeHandler {
     public static final ProductChangeHandler getInstance(Session session) {
         if (instance == null) {
             instance = new ProductChangeHandler(session);
-            System.out.println("New Instance!");
         }
         return instance;
     }
@@ -40,13 +39,14 @@ public class ProductChangeHandler {
         "productId text, " +
         "fechaModificacion timestamp, " +
         "nombreProducto text, " +
-        "marcaProducto text, " +
-        "modeloProducto text, " +
-        "anchoEnPulgadas double, " + 
-        "alturaEnPulgadas double, " +
+        "marca text, " +
+        "modelo text, " +
+        "ancho double, " +
+        "altura double, " +
         "precioAnterior double, " +
         "precioProducto double, " +
-        "calificacionProducto double, " + 
+        "calificacion double, " +
+        "operador text, " +
         "PRIMARY KEY (productId, fechaModificacion)" +
         ")");
   }
@@ -59,8 +59,8 @@ public class ProductChangeHandler {
     long timestamp = fechaModificacion.toInstant(ZoneOffset.UTC).toEpochMilli();    
 
     session.execute("INSERT INTO product_logs.product_changes " +
-        "(productId, fechaModificacion, nombreProducto, marcaProducto, modeloProducto, anchoEnPulgadas, alturaEnPulgadas, precioAnterior, precioProducto, calificacionProducto) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "(productId, fechaModificacion, nombreProducto, marca, modelo, ancho, altura, precioAnterior, precioProducto, calificacion, operador) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         cambioProducto.getProductoId(),
         timestamp,
         cambioProducto.getNombreProducto(),
@@ -72,7 +72,8 @@ public class ProductChangeHandler {
         cambioProducto.getPrecioAnterior(),
 
         cambioProducto.getPrecioProducto(),
-        cambioProducto.getCalificacionProducto()
+        cambioProducto.getCalificacionProducto(),
+        cambioProducto.getOperadorId()
         
         );
     }

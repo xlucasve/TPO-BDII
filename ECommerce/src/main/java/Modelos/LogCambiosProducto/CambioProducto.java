@@ -16,10 +16,11 @@ public class CambioProducto {
     // private ArrayList<Review> reviews;
     private Double calificacionProducto;
     private Double precioAnterior;
+    private String operadorId;
 
     public CambioProducto(String productoId, String nombreProducto, String marcaProducto,
             String modeloProducto, Double anchoEnPulgadas, Double alturaEnPulgadas, Double precioProducto,
-            Double calificacionProducto, Double precioAnterior) {
+            Double calificacionProducto, Double precioAnterior, String operadorId) {
         this.productoId = productoId;
        // this.fechaModificacion = fechaModificacion;
         this.nombreProducto = nombreProducto;
@@ -30,6 +31,7 @@ public class CambioProducto {
         this.precioProducto = precioProducto;
         this.calificacionProducto = calificacionProducto;
         this.precioAnterior = precioAnterior;
+        this.operadorId = operadorId;
     }
 
     public String getProductoId() {
@@ -74,5 +76,9 @@ public class CambioProducto {
 
     public Double getPrecioAnterior() {
         return precioAnterior;
+    }
+
+    public String getOperadorId() {
+        return operadorId;
     }
 }

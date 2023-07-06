@@ -28,7 +28,6 @@ public class GeneradorFactura {
             statementFactura.setInt(1, operadorResponsable.getIdOperador());
             statementFactura.setInt(2, cliente.getUsuarioIdSQL());
             statementFactura.setInt(3, idPago);
-
             statementFactura.executeUpdate();
         }
 
