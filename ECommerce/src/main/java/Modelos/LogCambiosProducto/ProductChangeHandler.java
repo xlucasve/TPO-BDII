@@ -84,7 +84,7 @@ public class ProductChangeHandler {
         String query = "SELECT * FROM product_changes WHERE productid = '" + idProducto + "' ORDER BY fechamodificacion;";
         ResultSet resultado = this.session.execute(query);
 
-        System.out.println("productid                | fechamodificacion         | alturaenpulgadas | anchoenpulgadas | calificacionproducto | marcaproducto | modeloproducto | nombreproducto | precioproducto");
+        System.out.println("productid                | fechamodificacion         | alturaenpulgadas | anchoenpulgadas | calificacionproducto | marcaproducto | modeloproducto | nombreproducto | precioanterior | precioproducto");
         System.out.println("--------------------------+---------------------------------+------------------+-----------------+----------------------+---------------+----------------+----------------+----------------");
 
         for(Row row: resultado) {
@@ -97,6 +97,7 @@ public class ProductChangeHandler {
             System.out.print(" "+row.getString("marcaproducto") + "         |");
             System.out.print(" " + row.getString("modeloproducto") + "  |");
             System.out.print(" " + row.getString("nombreproducto") + "         |");
+            System.out.println(" " + row.getDouble("precioanterior") + "            |");
             System.out.print(" " + row.getDouble("precioproducto"));
 
             System.out.println();
