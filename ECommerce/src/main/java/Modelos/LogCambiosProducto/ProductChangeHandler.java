@@ -43,6 +43,7 @@ public class ProductChangeHandler {
         "modeloProducto text, " +
         "anchoEnPulgadas double, " + 
         "alturaEnPulgadas double, " +
+        "precioAnterior double, " +
         "precioProducto double, " +
         "calificacionProducto double, " + 
         "PRIMARY KEY (productId, fechaModificacion)" +
@@ -53,27 +54,29 @@ public class ProductChangeHandler {
 
     LocalDateTime fechaModificacion = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    String formattedDate = fechaModificacion.format(formatter);
+    String fechaFormateada = fechaModificacion.format(formatter);
     long timestamp = fechaModificacion.toInstant(ZoneOffset.UTC).toEpochMilli();    
 
     session.execute("INSERT INTO ejemplo.product_changes " +
-        "(productId, fechaModificacion, nombreProducto, marcaProducto, modeloProducto, anchoEnPulgadas, alturaEnPulgadas, precioProducto, calificacionProducto) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "(productId, fechaModificacion, nombreProducto, marcaProducto, modeloProducto, anchoEnPulgadas, alturaEnPulgadas, precioAnterior, precioProducto, calificacionProducto) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         cambioProducto.getProductoId(),
-        //cambioProducto.getFechaModificacion(),
         timestamp,
         cambioProducto.getNombreProducto(),
         cambioProducto.getMarcaProducto(),
         cambioProducto.getModeloProducto(),
         cambioProducto.getAnchoEnPulgadas(),
         cambioProducto.getAlturaEnPulgadas(),
+        //
+        cambioProducto.getPrecioAnterior(),
+
         cambioProducto.getPrecioProducto(),
         cambioProducto.getCalificacionProducto()
         
-       
-
         );
     }
+
+    
 
     //quizas dividir en dos metodos, uno que devuelva el objeto resultado y otro que lo parsee/imprima.
     public void consultarLogPorId(String idProducto) {

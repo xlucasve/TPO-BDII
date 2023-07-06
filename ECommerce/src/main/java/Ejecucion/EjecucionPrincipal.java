@@ -2,6 +2,7 @@ package Ejecucion;
 
 import Modelos.CarroCompras.CarroCompra;
 import Modelos.Factura.GeneradorFactura;
+import Modelos.IniciadorSQL.CreacionTablas;
 import Modelos.LogCambiosProducto.ProductChangeHandler;
 import Modelos.Operador.Operador;
 import Modelos.Pedidos.Pedido;
@@ -62,9 +63,11 @@ public class EjecucionPrincipal {
         //
 
         
-        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
+        //String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
-        
+        String connectionUrl = "jdbc:sqlserver://localhost:1433;encrypt=false;databaseName=ECommerce;user=SA;password=Str0ngPassword@"; //Conexion Joaco
+
+
         System.out.println("Inicializando SQL...");
         Connection connectionSQL = DriverManager.getConnection(connectionUrl);
         if (connectionSQL != null) {
@@ -73,6 +76,14 @@ public class EjecucionPrincipal {
         System.out.println("SQL inicializado correctamente");
 
         Statement stmt = connectionSQL.createStatement();
+
+        //Creacion inicial de tablas por JDBC.
+        //Comentar si ya se tienen creadas.
+
+        //new CreacionTablas().CreacionInicialTablas(connectionUrl);
+    
+
+        //
         
 
         //Creacion de conexión a Redis
@@ -117,7 +128,7 @@ public class EjecucionPrincipal {
        
         //Consultar log producotos cassandra por id de producto e imprimir.
         ProductChangeHandler.getInstance(session).consultarLogPorId(producto.getProductoId());
-
+        //
         
         Usuario usuario = new Usuario("Diego", "Gutierrez", "Calle 123", 12345612, CategoriaIVA.A , collectionUsuario, connectionSQL);
         Date fecha1 = new Date(2023, Calendar.JUNE, 10, 10, 00, 00);
@@ -139,7 +150,7 @@ public class EjecucionPrincipal {
         carroCompra.undo(jedis);
         System.out.println(jedis.hgetAll(carroCompra.getCarroId()));
 
-        
+                
         //Crear nuevo Pedido
         Operador operador = new Operador("Damian Wacho", "Galvez", 1243650, connectionSQL);
         Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, carroCompra.getPrecioTotal().intValue(), collectionPedido, jedis);

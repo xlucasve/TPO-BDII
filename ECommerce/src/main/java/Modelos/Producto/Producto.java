@@ -23,6 +23,7 @@ public class Producto {
     private Double precioProducto;
     private ArrayList<Review> reviews;
     private Double calificacionProducto;
+    private Double precioAnterior;
 
     public Producto(String nombreProducto, String marcaProducto, String modeloProducto,
                     Double anchoEnPulgadas, Double alturaEnPulgadas, Double precioProducto,
@@ -41,6 +42,7 @@ public class Producto {
         this.calificacionProducto = calificacionProducto;
         agregarProductoACatalogo(collectionCatalogoProductos);
         agregarProductoAListadoPrecios(collectionListadoPrecios);
+        this.precioAnterior = precioProducto;
     }
 
     public String getProductoId(){return productoId;}
@@ -86,7 +88,8 @@ public class Producto {
             this.anchoEnPulgadas,
             this.alturaEnPulgadas,
             this.precioProducto,
-            this.calificacionProducto
+            this.calificacionProducto,
+            this.precioAnterior
             );
     }
 
@@ -128,6 +131,8 @@ public class Producto {
     }
 
     public void actualizarPrecioProducto(MongoCollection<Document> collectionListadoPrecios, Double nuevoPrecio){
+        
+        this.precioAnterior = this.precioProducto;
         this.precioProducto = nuevoPrecio;
 
         Document query = new Document();
