@@ -72,9 +72,6 @@ public class EjecucionPrincipal {
         }
         System.out.println("SQL inicializado correctamente");
 
-        Statement stmt = connectionSQL.createStatement();
-        
-
         //Creacion de conexión a Redis
         System.out.println("Inicializando Redis...");
         JedisPooled jedis = new JedisPooled("localhost", 6379);
@@ -126,7 +123,8 @@ public class EjecucionPrincipal {
 
 
         usuario.agregarSesion(sesionUsuario, collectionUsuario);
-        usuario.recuperarSesion(collectionUsuario);
+
+        //Creacion de carro de compra para el usuario
         CarroCompra carroCompra = new CarroCompra(usuario.getUsuarioId());
         
 
@@ -137,17 +135,23 @@ public class EjecucionPrincipal {
         carroCompra.agregarProducto(jedis, producto2);
         carroCompra.eliminarUnProducto(jedis, producto);
         carroCompra.undo(jedis);
+        System.out.println();
+        System.out.println("Id de este carro de compra: " + usuario.getUsuarioId());
+        System.out.println("Productos en este carro y su cantidad: ");
         System.out.println(jedis.hgetAll(carroCompra.getCarroId()));
+        System.out.println();
 
         
         //Crear nuevo Pedido
         Operador operador = new Operador("Damian Wacho", "Galvez", 1243650, connectionSQL);
         Pedido pedido1 = new Pedido(1, 20.4, carroCompra.getPrecioTotal(), carroCompra.getCarroId(), usuario, operador, carroCompra.getPrecioTotal().intValue(), collectionPedido, jedis);
-        String insert = "insert into operadores values ('Damian', 'Galvez', 13456)";
-        GeneradorFactura generadorFactura = GeneradorFactura.getInstancia();
 
+
+        //Obtenemos el generador de las facturas y creamos una
+        GeneradorFactura generadorFactura = GeneradorFactura.getInstancia();
         generadorFactura.generarFactura(pedido1, operador, pedido1.getCliente(), pedido1.getMontoTotalInt(),"Tarjeta de Credito", connectionSQL);
         
         System.out.println("Fin");
+        System.out.println("Cerrar el proyecto");
     }
 }

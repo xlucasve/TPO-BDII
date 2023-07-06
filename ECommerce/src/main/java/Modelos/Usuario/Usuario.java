@@ -109,7 +109,6 @@ public class Usuario {
         searchQuery.put("nombre", getNombre());
         FindIterable<Document> cursor = collectionUsuarios.find(searchQuery);
         MongoCursor<Document> cursorIterator = cursor.cursor();
-        System.out.println("Arreglar obtener solo ultima sesion");
     }
 
     public void insertarCliente(Connection connectionSQL) throws SQLException {
