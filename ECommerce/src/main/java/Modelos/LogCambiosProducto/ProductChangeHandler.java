@@ -27,9 +27,10 @@ public class ProductChangeHandler {
         this.session = session;
     }
 
-    public static synchronized ProductChangeHandler getInstance(Session session) {
+    public static final ProductChangeHandler getInstance(Session session) {
         if (instance == null) {
             instance = new ProductChangeHandler(session);
+            System.out.println("New Instance!");
         }
         return instance;
     }

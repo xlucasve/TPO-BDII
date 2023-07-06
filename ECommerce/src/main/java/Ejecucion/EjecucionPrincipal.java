@@ -67,9 +67,9 @@ public class EjecucionPrincipal {
         //
 
         
-        String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
+        //String connectionUrl = "jdbc:sqlserver://0.0.0.0:1433;encrypt=false;databaseName=ECommerce;user=sa;password=SuperAdmin#"; //Conexion Lucas
         // String connectionUrl = "jdbc:sqlserver://127.0.0.1:1433;encrypt=false;databaseName=ECommerce;user=salman;password=1234"; Conexion Juani Alippi
-        //String connectionUrl = "jdbc:sqlserver://localhost:1433;encrypt=false;databaseName=ECommerce;user=SA;password=Str0ngPassword@"; //Conexion Joaco
+        String connectionUrl = "jdbc:sqlserver://localhost:1433;encrypt=false;databaseName=ECommerce;user=SA;password=Str0ngPassword@"; //Conexion Joaco
         
         //Creacion inicial de tablas por JDBC.
         //Comentar si ya se tienen creadas.
